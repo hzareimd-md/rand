@@ -4,39 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>راند — اطفال</title>
+<title>راند</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="راند">
 <link rel="apple-touch-icon" href="icon-180.png">
 <style>
-:root{
-  --bg:#f6f7f9; --card:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
-  --brand:#0f766e; --brand-soft:#ccfbf1; --danger:#dc2626; --warn:#d97706; --ok:#059669;
-  --r:14px;
-}
-@media (prefers-color-scheme:dark){:root{
-  --bg:#0b0f14; --card:#151b23; --ink:#e8eaed; --muted:#9aa4b2; --line:#232c38;
-  --brand:#2dd4bf; --brand-soft:#0d3b36;
-}}
+:root{--bg:#f6f7f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;
+ --brand:#0f766e;--soft:#ccfbf1;--danger:#dc2626;--ok:#059669;--r:14px}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0f14;--card:#151b23;--ink:#e8eaed;--muted:#9aa4b2;
+ --line:#232c38;--brand:#2dd4bf;--soft:#0d3b36}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Vazirmatn,Tahoma,sans-serif;
-  font-size:15px;line-height:1.7;padding-bottom:78px}
+body{margin:0;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7;padding-bottom:76px;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Vazirmatn,Tahoma,sans-serif}
 header{position:sticky;top:0;z-index:20;background:var(--brand);color:#fff;
-  padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;align-items:center;gap:10px}
+ padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;align-items:center;gap:10px}
 header h1{font-size:17px;margin:0;flex:1;font-weight:700}
 header button{background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:10px;padding:7px 11px;font:inherit;font-size:14px}
-main{padding:12px 14px;max-width:760px;margin:0 auto}
+main{padding:12px 14px;max-width:820px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px;margin-bottom:11px}
-.row{display:flex;gap:9px;align-items:center}
-.row>*{min-width:0}
-.grow{flex:1}
+.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}.grow{flex:1}
 label{display:block;font-size:12.5px;color:var(--muted);margin:9px 0 4px}
 input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;
-  background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
-textarea{min-height:76px;resize:vertical;line-height:1.75}
+ background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+textarea{min-height:70px;resize:vertical;line-height:1.75}
 button{cursor:pointer}
 .btn{background:var(--brand);color:#fff;border:0;border-radius:11px;padding:11px 15px;font:inherit;font-weight:600;font-size:15px}
 .btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand)}
@@ -44,56 +36,61 @@ button{cursor:pointer}
 .btn.dim{background:var(--line);color:var(--ink)}
 .btn:disabled{opacity:.5}
 nav{position:fixed;bottom:0;inset-inline:0;z-index:20;display:flex;background:var(--card);
-  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+ border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:0;border:0;padding:9px 2px 7px;color:var(--muted);font:inherit;font-size:11px;display:grid;gap:2px;justify-items:center}
 nav button.on{color:var(--brand);font-weight:700}
 nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);margin-inline-end:4px}
-.tag.red{background:#fee2e2;color:#b91c1c}.tag.amber{background:#fef3c7;color:#92400e}
-.tag.blue{background:#dbeafe;color:#1d4ed8}.tag.gray{background:var(--line);color:var(--muted)}
-@media (prefers-color-scheme:dark){.tag.red{background:#3f1d1d}.tag.amber{background:#3d2e10}.tag.blue{background:#16284a}}
-.pt{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
-.pt:last-child{border:0}
-.bed{background:var(--brand);color:#fff;border-radius:10px;min-width:44px;height:44px;
-  display:grid;place-items:center;font-weight:800;font-size:15px;flex:none}
-.pt b{font-size:15px;display:block}
-.pt small{color:var(--muted);font-size:12.5px;display:block}
-.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:11px;padding-bottom:3px}
-.tabs button{flex:none;background:var(--card);border:1px solid var(--line);color:var(--muted);
-  border-radius:999px;padding:7px 14px;font:inherit;font-size:13.5px}
-.tabs button.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
-h3{font-size:14.5px;margin:0 0 9px}
-.muted{color:var(--muted);font-size:13px}
-.empty{text-align:center;color:var(--muted);padding:34px 14px;font-size:14px}
+
+/* ---- دستیار ---- */
+.bigmic{width:118px;height:118px;border-radius:50%;border:0;background:var(--brand);color:#fff;
+ font-size:46px;display:grid;place-items:center;margin:14px auto;box-shadow:0 8px 28px rgba(15,118,110,.32)}
+.bigmic.rec{background:var(--danger);animation:pulse 1.15s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}70%{box-shadow:0 0 0 24px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+.hint{text-align:center;color:var(--muted);font-size:13.5px;margin:0 0 6px}
+.ex{background:var(--bg);border:1px dashed var(--line);border-radius:11px;padding:10px 12px;
+ font-size:13px;color:var(--muted);line-height:2}
+.log{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+.log:last-child{border:0}
+.pill{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--brand);flex:none;margin-top:3px}
+.pill.red{background:#fee2e2;color:#b91c1c}.pill.amber{background:#fef3c7;color:#92400e}
+.pill.gray{background:var(--line);color:var(--muted)}.pill.green{background:#d1fae5;color:#047857}
+@media (prefers-color-scheme:dark){.pill.red{background:#3f1d1d}.pill.amber{background:#3d2e10}.pill.green{background:#06352a}}
+
+/* ---- جدول ---- */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:600px}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg);font-size:12px;color:var(--muted);font-weight:600;position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.b{font-weight:800;color:var(--brand);font-size:15px;white-space:nowrap}
+.mini{color:var(--muted);font-size:12px;display:block}
+.todo{color:#92400e}.todo:before{content:"○ "}
+@media (prefers-color-scheme:dark){.todo{color:#fcd34d}}
+.doneline{text-decoration:line-through;color:var(--muted)}
+
 .chk{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
 .chk:last-child{border:0}
 .chk input{width:21px;height:21px;flex:none;margin-top:2px;accent-color:var(--brand)}
 .chk .x{background:0;border:0;color:var(--muted);font-size:19px;padding:0 5px;line-height:1}
-.done{text-decoration:line-through;color:var(--muted)}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:grid;align-items:end}
 .sheet{background:var(--card);border-radius:18px 18px 0 0;max-height:92vh;overflow:auto;
-  padding:16px 15px calc(env(safe-area-inset-bottom) + 16px)}
+ padding:16px 15px calc(env(safe-area-inset-bottom) + 16px)}
 @media(min-width:700px){.modal{align-items:center}.sheet{border-radius:18px;max-width:640px;margin:auto;width:94%}}
-.pre{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:11px;
-  white-space:pre-wrap;font-size:13.5px;max-height:310px;overflow:auto;line-height:1.8}
-.mic{background:var(--brand-soft);color:var(--brand);border:0;border-radius:10px;width:42px;height:42px;
-  flex:none;display:grid;place-items:center;font-size:19px}
-.mic.rec{background:var(--danger);color:#fff;animation:p 1s infinite}
-@keyframes p{50%{opacity:.55}}
+.warnbox{background:#fef3c7;color:#78350f;border-radius:10px;padding:9px 11px;font-size:12.5px;line-height:1.7}
+@media (prefers-color-scheme:dark){.warnbox{background:#3d2e10;color:#fde68a}}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid currentColor;border-top-color:transparent;
+ border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
+@keyframes s{to{transform:rotate(360deg)}}
+.empty{text-align:center;color:var(--muted);padding:30px 14px;font-size:14px}
+.muted{color:var(--muted);font-size:13px}
+h3{font-size:14.5px;margin:0 0 9px}
+hr{border:0;border-top:1px solid var(--line);margin:13px 0}
+.ddx{border-inline-start:3px solid var(--line);padding-inline-start:10px;margin-bottom:11px}
+.ddx.cm{border-color:var(--danger)}.ddx.lk{border-color:var(--ok)}.ddx.nx{border-color:var(--brand)}
 .stat{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:11px}
 .stat div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;text-align:center}
 .stat b{display:block;font-size:24px;color:var(--brand);font-weight:800}
 .stat small{color:var(--muted);font-size:12px}
-.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:4px}
-.bar i{display:block;height:100%;background:var(--brand)}
-.warnbox{background:#fef3c7;color:#78350f;border-radius:10px;padding:9px 11px;font-size:12.5px;line-height:1.7}
-@media (prefers-color-scheme:dark){.warnbox{background:#3d2e10;color:#fde68a}}
-.spin{display:inline-block;width:15px;height:15px;border:2px solid currentColor;border-top-color:transparent;
-  border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
-@keyframes s{to{transform:rotate(360deg)}}
-.ddx{border-inline-start:3px solid var(--line);padding-inline-start:10px;margin-bottom:11px}
-.ddx.cm{border-color:var(--danger)}.ddx.lk{border-color:var(--ok)}.ddx.nx{border-color:var(--brand)}
-hr{border:0;border-top:1px solid var(--line);margin:13px 0}
 </style>
 </head>
 <body>
@@ -101,442 +98,449 @@ hr{border:0;border-top:1px solid var(--line);margin:13px 0}
 <header>
   <button id="back" style="display:none">‹</button>
   <h1 id="title">راند</h1>
-  <button id="mainAct">+</button>
+  <button id="act" style="display:none">⋯</button>
 </header>
-
 <main id="view"></main>
-
 <nav id="nav"></nav>
 
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>
-/* ============ ذخیره‌سازی — همه‌چیز روی همین دستگاه ============ */
-const KEY='rand_peds_v1';
-const DEF={patients:[],procs:[],settings:{baseUrl:'https://api.gapgpt.app/v1',model:'gemini-2.5-flash-lite',apiKey:''}};
+/* ═══ داده — فقط روی همین دستگاه ═══ */
+const KEY='rand_v3';
+const DEF={beds:[],log:[],procs:[],settings:{baseUrl:'https://api.gapgpt.app/v1',model:'gemini-2.5-flash-lite',apiKey:''}};
 let S=load();
-function load(){try{return Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return structuredClone(DEF)}}
+function load(){try{return Object.assign({},structuredClone(DEF),JSON.parse(localStorage.getItem(KEY)||'{}'))}
+  catch(e){return structuredClone(DEF)}}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const now=()=>new Date().toLocaleString('fa-IR',{hour:'2-digit',minute:'2-digit'});
 const today=()=>new Date().toLocaleDateString('fa-IR');
 
-/* ============ کمکی‌های اطفال ============ */
-function ageText(p){
-  if(p.ageM==null||p.ageM==='')return '—';
-  const m=+p.ageM;
-  if(m<1)return 'نوزاد';
-  if(m<24)return m+' ماهه';
-  const y=Math.floor(m/12), r=m%12;
-  return y+' ساله'+(r?' و '+r+' ماه':'');
+/* ارقام فارسی/عربی → انگلیسی، تا «تخت ۱۲» و «تخت 12» یکی شوند */
+const fixNum=s=>String(s??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                             .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+function bedOf(n,make){
+  n=fixNum(n).trim(); if(!n)return null;
+  let b=S.beds.find(x=>x.bed===n);
+  if(!b&&make){b={id:uid(),bed:n,items:[],created:today()};S.beds.push(b);
+    S.beds.sort((a,c)=>(parseInt(a.bed)||999)-(parseInt(c.bed)||999))}
+  return b;
 }
-// محدوده‌ی نرمال علائم حیاتی بر حسب سن (منبع: PALS)
-function vitalRange(m){
-  const t=[[1,{hr:'100-205',rr:'30-60',sbp:'>60'}],[12,{hr:'100-190',rr:'30-53',sbp:'>70'}],
-    [24,{hr:'98-140',rr:'22-37',sbp:'>72'}],[60,{hr:'80-120',rr:'20-28',sbp:'>76'}],
-    [144,{hr:'75-118',rr:'18-25',sbp:'>82'}],[999,{hr:'60-100',rr:'12-20',sbp:'>90'}]];
-  for(const [lim,v] of t) if(m<lim) return v;
+function ageText(b){
+  if(b.ageM==null||b.ageM==='')return '';
+  const m=+b.ageM; if(m<1)return 'نوزاد'; if(m<24)return m+' ماهه';
+  const y=Math.floor(m/12),r=m%12; return y+' ساله'+(r?' و '+r+' ماه':'');
 }
-function wtWarn(p){ // وزن لازم است چون همه‌ی دوزها mg/kg است
-  return (!p.wt) ? '<div class="warnbox" style="margin-top:8px">⚠️ وزن ثبت نشده — بدون وزن نمی‌شود دوز حساب کرد.</div>' : '';
-}
-const TAGS=[['بدحال','red'],['تب‌دار','amber'],['منتظر مشاوره','blue'],['منتظر جواب','gray'],['آماده ترخیص','gray']];
-const WARDS=['اطفال','NICU','PICU','اورژانس','ترخیص‌شده'];
+function vitalRange(m){for(const[l,v]of[[1,{hr:'100-205',rr:'30-60',sbp:'>60'}],[12,{hr:'100-190',rr:'30-53',sbp:'>70'}],
+  [24,{hr:'98-140',rr:'22-37',sbp:'>72'}],[60,{hr:'80-120',rr:'20-28',sbp:'>76'}],
+  [144,{hr:'75-118',rr:'18-25',sbp:'>82'}],[999,{hr:'60-100',rr:'12-20',sbp:'>90'}]])if(m<l)return v}
 
-/* ============ ناوبری ============ */
-let TAB='pt', OPEN=null, SUB='hpi';
-const NAVS=[['pt','بیماران','M4 20v-6a8 8 0 1116 0v6M12 6V4'],
-  ['todo','کارها','M4 7h16M4 12h16M4 17h10'],
-  ['stats','آمار','M4 20V10M10 20V4M16 20v-7M22 20H2'],
-  ['set','تنظیمات','M12 15a3 3 0 100-6 3 3 0 000 6zM19 12l2 1-2 4-2-1-3 2v2H10v-2l-3-2-2 1-2-4 2-1-2-1 2-4 2 1 3-2V2h4v2l3 2 2-1 2 4-2 1z']];
-document.getElementById('nav').innerHTML=NAVS.map(([k,l,d])=>
-  `<button data-t="${k}"><svg viewBox="0 0 24 24"><path d="${d}"/></svg>${l}</button>`).join('');
+/* items: {id,kind,text,done,date}  kind = task | result | note | dx */
+const KINDS={task:['کار','amber'],result:['جواب','green'],note:['یادداشت','gray'],dx:['تشخیص','']};
+const openTasks=b=>(b.items||[]).filter(i=>i.kind==='task'&&!i.done);
+const lastOf=(b,k)=>(b.items||[]).filter(i=>i.kind===k).slice(-1)[0];
+
+/* ═══ ناوبری ═══ */
+let TAB='ask', OPEN=null;
+document.getElementById('nav').innerHTML=[
+ ['ask','دستیار','M12 3a3 3 0 00-3 3v5a3 3 0 006 0V6a3 3 0 00-3-3zM5 11a7 7 0 0014 0M12 18v3'],
+ ['tbl','جدول','M3 5h18M3 12h18M3 19h18M9 5v14'],
+ ['stat','آمار','M4 20V10M10 20V4M16 20v-7M22 20H2'],
+ ['set','تنظیمات','M12 15a3 3 0 100-6 3 3 0 000 6zM19 12l2 1-2 4-2-1-3 2v2H10v-2l-3-2-2 1-2-4 2-1-2-1 2-4 2 1 3-2V2h4v2l3 2 2-1 2 4-2 1z']]
+ .map(([k,l,d])=>`<button data-t="${k}"><svg viewBox="0 0 24 24"><path d="${d}"/></svg>${l}</button>`).join('');
 document.getElementById('nav').onclick=e=>{const b=e.target.closest('[data-t]');if(b){OPEN=null;TAB=b.dataset.t;render()}};
 document.getElementById('back').onclick=()=>{OPEN=null;render()};
 
 function render(){
-  const V=document.getElementById('view'), T=document.getElementById('title'),
-        B=document.getElementById('back'), A=document.getElementById('mainAct');
+  const V=document.getElementById('view'),T=document.getElementById('title'),
+        B=document.getElementById('back'),A=document.getElementById('act');
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===TAB&&!OPEN));
-  B.style.display=OPEN?'':'none'; A.style.display='';
-  if(OPEN){const p=S.patients.find(x=>x.id===OPEN);
-    if(!p){OPEN=null;return render()}
-    T.textContent='تخت '+(p.bed||'—'); A.textContent='⋯'; A.onclick=()=>ptMenu(p); V.innerHTML=ptView(p); bindPt(p); return}
-  A.textContent='+';
-  if(TAB==='pt'){T.textContent='بیماران';A.onclick=()=>editPt();V.innerHTML=listView()}
-  if(TAB==='todo'){T.textContent='کارهای راند';A.style.display='none';V.innerHTML=todoView()}
-  if(TAB==='stats'){T.textContent='آمار من';A.style.display='none';V.innerHTML=statsView();bindStats()}
-  if(TAB==='set'){T.textContent='تنظیمات';A.style.display='none';V.innerHTML=setView();bindSet()}
+  B.style.display=OPEN?'':'none'; A.style.display='none';
+  if(OPEN){const b=S.beds.find(x=>x.id===OPEN); if(!b){OPEN=null;return render()}
+    T.textContent='تخت '+b.bed; A.style.display=''; A.onclick=()=>bedMenu(b);
+    V.innerHTML=bedView(b); bindBed(b); window.scrollTo(0,0); return}
+  if(TAB==='ask'){T.textContent='راند';V.innerHTML=askView();bindAsk()}
+  if(TAB==='tbl'){T.textContent='جدول راند';V.innerHTML=tblView();}
+  if(TAB==='stat'){T.textContent='آمار من';V.innerHTML=statView();bindStat()}
+  if(TAB==='set'){T.textContent='تنظیمات';V.innerHTML=setView();bindSet()}
   window.scrollTo(0,0);
 }
 
-/* ============ لیست بیماران ============ */
-let WARD='همه';
-function listView(){
-  const act=S.patients.filter(p=>WARD==='همه'?p.ward!=='ترخیص‌شده':p.ward===WARD);
-  return `<div class="tabs">${['همه',...WARDS].map(w=>
-      `<button class="${w===WARD?'on':''}" onclick="WARD='${w}';render()">${w}</button>`).join('')}</div>
-    <div class="card">${ act.length? act.map(p=>{
-      const undone=(p.orders||[]).filter(o=>!o.done).length;
-      return `<div class="pt" onclick="OPEN='${p.id}';SUB='hpi';render()">
-        <div class="bed">${esc(p.bed||'؟')}</div>
-        <div class="grow">
-          <b>${esc(p.dx||'بدون تشخیص')}</b>
-          <small>${ageText(p)} · ${p.sex==='f'?'دختر':'پسر'}${p.wt?' · '+p.wt+' kg':''}</small>
-          <div style="margin-top:5px">
-            ${(p.tags||[]).map(t=>`<span class="tag ${(TAGS.find(x=>x[0]===t)||[,'gray'])[1]}">${esc(t)}</span>`).join('')}
-            ${undone?`<span class="tag amber">${undone} کار مانده</span>`:''}
-          </div>
-        </div></div>`}).join('')
-      : '<div class="empty">بیماری در این بخش نیست.<br>با دکمه‌ی + بالا اضافه کن.</div>'}</div>`;
+/* ═══ صفحه‌ی دستیار ═══ */
+function askView(){
+  return `<div class="card" style="text-align:center">
+    <button class="bigmic" id="mic">🎤</button>
+    <p class="hint" id="hint">بزن و حرف بزن — یا پایین تایپ کن</p>
+    <div class="row"><textarea id="txt" class="grow" placeholder="مثلاً: تخت ۱۲ سی‌بی‌سی و سی‌آرپی فرستادیم، تبش ۳۹ بود"></textarea></div>
+    <button class="btn" id="go" style="width:100%;margin-top:9px">ثبت کن</button>
+    <div id="out" class="muted" style="margin-top:9px"></div></div>
+  <div class="card"><h3>چی می‌توانی بگویی</h3><div class="ex">
+    «تخت ۱۲، پسر ۲۰ ماهه، ۱۱ کیلو، تشنج تب‌دار»<br>
+    «برای تخت ۱۲ سی‌بی‌سی و سی‌آرپی بفرست»<br>
+    «تخت ۱۲ سی‌بی‌سی‌اش آمد، WBC چهارده»<br>
+    «تخت ۷ رو انجام دادم» · «تخت ۷ ال‌پی شد»<br>
+    «تخت ۹ رو ترخیص کن»</div></div>
+  <div class="card"><h3>امروز چه کردی</h3>
+    ${S.log.length?S.log.slice(0,25).map(l=>`<div class="log">
+      <span class="pill ${l.c||''}">${esc(l.t)}</span>
+      <div class="grow"><div>${esc(l.x)}</div><small class="muted">${esc(l.at)}</small></div></div>`).join('')
+     :'<div class="empty">هنوز چیزی ثبت نکرده‌ای.</div>'}</div>`;
+}
+function bindAsk(){
+  const $=i=>document.getElementById(i);
+  $('mic').onclick=()=>listen($('mic'),$('hint'),t=>{$('txt').value=(($('txt').value+' '+t).trim());$('go').click()});
+  $('go').onclick=()=>submit($('txt').value.trim());
+}
+function logit(t,x,c){S.log.unshift({t,x,c,at:now()}); S.log=S.log.slice(0,300)}
+
+/* ═══ فهم جمله ═══ */
+async function submit(text){
+  if(!text)return;
+  const $=i=>document.getElementById(i), o=$('out');
+  o.innerHTML='<span class="spin"></span> در حال فهمیدن…'; $('go').disabled=true;
+  try{
+    const acts = S.settings.apiKey ? await parseAI(text) : parseLocal(text);
+    if(!acts.length){o.textContent='نفهمیدم به کدام تخت مربوط است. اولش بگو «تخت ۱۲…».';$('go').disabled=false;return}
+    apply(acts); $('txt').value=''; save(); render();
+  }catch(e){ o.innerHTML='❌ '+esc(e.message)+'<br><span class="muted">به‌جایش خام ثبت شد.</span>';
+    const f=parseLocal(text); if(f.length){apply(f);$('txt').value='';save();setTimeout(render,1400)} else $('go').disabled=false }
 }
 
-/* ============ فرم بیمار ============ */
-function editPt(p){
-  p=p||{id:uid(),ward:'اطفال',sex:'m',tags:[],orders:[],notes:[],admit:today()};
-  sheet(`<h3>${S.patients.find(x=>x.id===p.id)?'ویرایش':'بیمار جدید'}</h3>
-  <div class="row"><div class="grow"><label>تخت</label><input id="f_bed" value="${esc(p.bed||'')}"></div>
-    <div class="grow"><label>بخش</label><select id="f_ward">${WARDS.map(w=>`<option ${w===p.ward?'selected':''}>${w}</option>`).join('')}</select></div></div>
-  <label>نام (اختیاری — پیشنهاد: خالی بگذار)</label><input id="f_name" value="${esc(p.name||'')}">
-  <div class="row"><div class="grow"><label>سن (ماه)</label><input id="f_age" type="number" inputmode="numeric" value="${p.ageM??''}"></div>
-    <div class="grow"><label>وزن (kg)</label><input id="f_wt" type="number" inputmode="decimal" step="0.1" value="${p.wt??''}"></div>
-    <div class="grow"><label>جنس</label><select id="f_sex"><option value="m" ${p.sex==='m'?'selected':''}>پسر</option><option value="f" ${p.sex==='f'?'selected':''}>دختر</option></select></div></div>
-  <label>تشخیص / شکایت اصلی</label><input id="f_dx" value="${esc(p.dx||'')}">
-  <label>تگ‌ها</label><div id="f_tags">${TAGS.map(([t,c])=>
-    `<button type="button" class="tag ${c}" style="border:1px solid transparent;cursor:pointer;padding:5px 11px;font-size:13px;opacity:${(p.tags||[]).includes(t)?1:.42}" data-tag="${t}">${t}</button>`).join('')}</div>
-  <div class="row" style="margin-top:15px"><button class="btn grow" id="f_ok">ذخیره</button>
-    <button class="btn dim" onclick="closeSheet()">انصراف</button></div>`);
-  const sel=new Set(p.tags||[]);
-  document.getElementById('f_tags').onclick=e=>{const b=e.target.closest('[data-tag]');if(!b)return;
-    const t=b.dataset.tag; sel.has(t)?sel.delete(t):sel.add(t); b.style.opacity=sel.has(t)?1:.42};
-  document.getElementById('f_ok').onclick=()=>{
-    const g=i=>document.getElementById('f_'+i).value.trim();
-    Object.assign(p,{bed:g('bed'),ward:g('ward'),name:g('name'),dx:g('dx'),sex:g('sex'),
-      ageM:g('age')===''?null:+g('age'), wt:g('wt')===''?null:+g('wt'), tags:[...sel]});
-    if(!S.patients.find(x=>x.id===p.id))S.patients.unshift(p);
-    save();closeSheet();render()};
+/* پارسر آفلاین — وقتی کلید نیست یا سرویس جواب نداد */
+function parseLocal(text){
+  const t=fixNum(text);
+  const m=t.match(/تخت\s*([0-9]+)/); if(!m)return [];
+  const rest=t.slice(m.index+m[0].length).replace(/^[\s,،.:؛-]+/,'').trim();
+  if(!rest)return [];
+  if(/ترخیص/.test(rest))return [{bed:m[1],kind:'discharge'}];
+  if(/انجام شد|انجام دادم|شد$|زدیم|گرفتیم/.test(rest))return [{bed:m[1],kind:'done',text:rest}];
+  if(/بفرست|بگیر|درخواست|اوردر|چک کن/.test(rest))return [{bed:m[1],kind:'task',text:rest}];
+  if(/جواب|آمد|اومد|نتیجه/.test(rest))return [{bed:m[1],kind:'result',text:rest}];
+  return [{bed:m[1],kind:'note',text:rest}];
 }
 
-function ptMenu(p){
-  sheet(`<h3>تخت ${esc(p.bed||'')}</h3>
-  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();editPt(S.patients.find(x=>x.id==='${p.id}'))">ویرایش مشخصات</button>
-  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="copyReport('${p.id}')">📋 کپی گزارش برای HIS</button>
-  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();makeDDx('${p.id}')">🧠 تشخیص افتراقی (AI)</button>
-  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();makePPT('case','${p.id}')">📊 پاورپوینت معرفی کیس</button>
-  <button class="btn ghost" style="width:100%;margin-bottom:8px;color:var(--danger);border-color:var(--danger)" onclick="delPt('${p.id}')">حذف بیمار</button>
+async function parseAI(text){
+  const beds=S.beds.map(b=>b.bed).join('، ')||'—';
+  const t=await ai([{role:'system',content:
+`تو دستیار یک اینترن بخش اطفال هستی. جمله‌ی گفتاری او را به فهرست عمل تبدیل کن. فقط JSON برگردان:
+{"actions":[{"bed":"12","kind":"...","text":"...","ageM":20,"wt":11.5,"sex":"m","dx":"..."}]}
+kind یکی از این‌هاست:
+- "task"   کاری که باید انجام شود (اوردر، آزمایش، درخواست مشاوره). برای هر آزمایش یک action جدا بساز.
+- "result" جواب آزمایش یا یافته‌ای که آمده.
+- "done"   کاری که انجام شده — متنش را بنویس تا کار باز متناظر تیک بخورد.
+- "note"   هر چیز دیگر (سیر بیمار، علامت، تصمیم).
+- "info"   مشخصات بیمار؛ ageM (سن به ماه)، wt (وزن kg)، sex (m/f)، dx (تشخیص) را پر کن.
+- "discharge" ترخیص.
+- "ddx"    وقتی صریحاً تشخیص افتراقی خواست.
+تخت‌های موجود: ${beds}. شماره‌ی تخت را با رقم انگلیسی بده. متن را کوتاه و تمیز بنویس، بدون «تخت N».
+اگر شماره‌ی تخت گفته نشد، actions را خالی بگذار.`},
+    {role:'user',content:text}],true);
+  const d=parseJSON(t);
+  return (d.actions||[]).filter(a=>a&&a.bed!=null).map(a=>({...a,bed:fixNum(a.bed)}));
+}
+
+function apply(acts){
+  for(const a of acts){
+    const b=bedOf(a.bed,true); if(!b)continue;
+    const txt=(a.text||'').trim();
+    if(a.kind==='info'){
+      if(a.ageM!=null)b.ageM=+a.ageM; if(a.wt!=null)b.wt=+a.wt;
+      if(a.sex)b.sex=a.sex; if(a.dx)b.dx=a.dx;
+      logit('تخت '+b.bed,'مشخصات ثبت شد'+(a.dx?' — '+a.dx:''),''); continue}
+    if(a.kind==='discharge'){b.out=true;logit('تخت '+b.bed,'ترخیص شد','gray');continue}
+    if(a.kind==='ddx'){logit('تخت '+b.bed,'درخواست تشخیص افتراقی','');setTimeout(()=>makeDDx(b.id),350);continue}
+    if(a.kind==='done'){
+      const open=openTasks(b);
+      const hit=open.find(i=>near(i.text,txt))||open[0];
+      if(hit){hit.done=true;hit.doneAt=now();logit('تخت '+b.bed,'✔ '+hit.text,'green')}
+      else{b.items.push({id:uid(),kind:'note',text:txt,date:now()});logit('تخت '+b.bed,txt,'gray')}
+      continue}
+    const kind=['task','result','note'].includes(a.kind)?a.kind:'note';
+    if(!txt)continue;
+    b.items.push({id:uid(),kind,text:txt,done:false,date:now()});
+    logit('تخت '+b.bed,txt,KINDS[kind][1]);
+  }
+}
+/* تطبیق تقریبی متن «انجام شد» با کار باز */
+function near(a,b){
+  const n=s=>fixNum(s).toLowerCase().replace(/[^\wآ-ی ]/g,' ').split(/\s+/).filter(w=>w.length>1);
+  const A=n(a),B=n(b); if(!A.length||!B.length)return false;
+  return A.some(w=>B.includes(w));
+}
+
+/* ═══ جدول ═══ */
+function tblView(){
+  const act=S.beds.filter(b=>!b.out);
+  if(!act.length)return '<div class="empty">هنوز تختی ثبت نشده.<br>برو به دستیار و بگو «تخت ۱۲…».</div>';
+  return `<div class="tw"><table><thead><tr>
+      <th>تخت</th><th>بیمار</th><th>کارهای مانده</th><th>آخرین جواب</th><th>آخرین نکته</th></tr></thead><tbody>
+    ${act.map(b=>{const r=lastOf(b,'result'),n=lastOf(b,'note'),o=openTasks(b);
+      return `<tr onclick="OPEN='${b.id}';render()">
+        <td class="b">${esc(b.bed)}</td>
+        <td>${esc(b.dx||'—')}<span class="mini">${esc(ageText(b))}${b.wt?' · '+b.wt+'kg':''}</span></td>
+        <td>${o.length?o.map(i=>`<div class="todo">${esc(i.text)}</div>`).join(''):'<span class="mini">—</span>'}</td>
+        <td>${r?esc(r.text)+`<span class="mini">${esc(r.date)}</span>`:'<span class="mini">—</span>'}</td>
+        <td>${n?esc(n.text)+`<span class="mini">${esc(n.date)}</span>`:'<span class="mini">—</span>'}</td></tr>`}).join('')}
+    </tbody></table></div>
+  <p class="muted" style="text-align:center">روی هر سطر بزن تا کامل ببینی · جدول را بکش تا ستون‌های بعدی بیاید</p>
+  ${S.beds.some(b=>b.out)?`<div class="card"><h3>ترخیص‌شده‌ها</h3>${S.beds.filter(b=>b.out).map(b=>
+    `<div class="log"><span class="pill gray">تخت ${esc(b.bed)}</span><div class="grow" onclick="OPEN='${b.id}';render()">${esc(b.dx||'—')}</div></div>`).join('')}</div>`:''}`;
+}
+
+/* ═══ صفحه‌ی تخت ═══ */
+function bedView(b){
+  const v=vitalRange(b.ageM??60);
+  return `<div class="card">
+    <b style="font-size:16px">${esc(b.dx||'بدون تشخیص')}</b>
+    <div class="muted">${esc(ageText(b))||'سن ثبت نشده'}${b.sex?' · '+(b.sex==='f'?'دختر':'پسر'):''}${b.wt?' · '+b.wt+' kg':''}</div>
+    ${!b.wt?'<div class="warnbox" style="margin-top:8px">⚠️ وزن ثبت نشده — بگو «تخت '+esc(b.bed)+' یازده کیلو» تا دوز حساب شود.</div>':''}
+    <hr><div class="muted">نرمال این سن (PALS) — HR ${v.hr} · RR ${v.rr} · SBP ${v.sbp}</div>
+    ${b.wt?`<div class="row" style="margin-top:9px"><input id="dz" type="number" inputmode="decimal" placeholder="دوز mg/kg" class="grow">
+      <button class="btn sm" id="dzgo">محاسبه</button></div><div id="dzo" class="muted" style="margin-top:5px"></div>`:''}
+  </div>
+  <div class="card"><div class="row"><textarea id="q" class="grow" placeholder="چیزی اضافه کن…"></textarea>
+    <button class="btn sm" id="qgo">ثبت</button></div>
+    <p class="muted" style="margin:6px 0 0">لازم نیست «تخت ${esc(b.bed)}» بگویی — اینجا خودش می‌داند.</p></div>
+  <div class="card"><h3>کارهای مانده</h3>
+    ${openTasks(b).length?openTasks(b).map(i=>`<div class="chk"><input type="checkbox" data-do="${i.id}">
+      <span class="grow">${esc(i.text)}</span><button class="x" data-del="${i.id}">×</button></div>`).join('')
+     :'<div class="muted">کاری مانده نیست 🎉</div>'}</div>
+  <div class="card"><h3>همه‌چیز</h3>
+    ${(b.items||[]).length?[...b.items].reverse().map(i=>`<div class="log">
+      <span class="pill ${KINDS[i.kind][1]}">${KINDS[i.kind][0]}</span>
+      <div class="grow"><div class="${i.done?'doneline':''}">${esc(i.text)}</div>
+      <small class="muted">${esc(i.date)}${i.done?' · انجام شد '+esc(i.doneAt||''):''}</small></div>
+      <button class="x" data-del="${i.id}">×</button></div>`).join(''):'<div class="muted">خالی است.</div>'}</div>
+  ${(b.ddx||[]).length?`<div class="card"><h3>تشخیص افتراقی</h3>${b.ddx.map(renderDdx).join('<hr>')}</div>`:''}`;
+}
+function bindBed(b){
+  const $=i=>document.getElementById(i),V=document.getElementById('view');
+  if($('dzgo'))$('dzgo').onclick=()=>{const d=parseFloat($('dz').value);if(!d)return;
+    $('dzo').innerHTML=`<b>${(d*b.wt).toFixed(1)} mg</b> در هر دوز · ÷۲: ${(d*b.wt/2).toFixed(1)} · ÷۳: ${(d*b.wt/3).toFixed(1)} · ÷۴: ${(d*b.wt/4).toFixed(1)} mg`};
+  $('qgo').onclick=async()=>{const t=$('q').value.trim();if(!t)return;
+    $('qgo').disabled=true;
+    try{const acts=S.settings.apiKey?await parseAI('تخت '+b.bed+' '+t):parseLocal('تخت '+b.bed+' '+t);
+      apply(acts.length?acts:[{bed:b.bed,kind:'note',text:t}])}
+    catch(e){apply([{bed:b.bed,kind:'note',text:t}])}
+    save();render()};
+  V.querySelectorAll('[data-do]').forEach(c=>c.onchange=()=>{
+    const i=b.items.find(x=>x.id===c.dataset.do); i.done=true;i.doneAt=now();
+    logit('تخت '+b.bed,'✔ '+i.text,'green');save();render()});
+  V.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{
+    b.items=b.items.filter(i=>i.id!==x.dataset.del);save();render()});
+}
+function bedMenu(b){
+  sheet(`<h3>تخت ${esc(b.bed)}</h3>
+  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="copyReport('${b.id}')">📋 کپی گزارش برای HIS</button>
+  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();makeDDx('${b.id}')">🧠 تشخیص افتراقی</button>
+  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();makePPT('case','${b.id}')">📊 پاورپوینت معرفی کیس</button>
+  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="toggleOut('${b.id}')">${b.out?'برگرداندن به بخش':'ترخیص'}</button>
+  <button class="btn ghost" style="width:100%;margin-bottom:8px;color:var(--danger);border-color:var(--danger)" onclick="delBed('${b.id}')">حذف تخت</button>
   <button class="btn dim" style="width:100%" onclick="closeSheet()">بستن</button>`);
 }
-function delPt(id){ if(!confirm('این بیمار و همه‌ی یادداشت‌هایش حذف شود؟'))return;
-  S.patients=S.patients.filter(x=>x.id!==id);save();closeSheet();OPEN=null;render()}
+function toggleOut(id){const b=S.beds.find(x=>x.id===id);b.out=!b.out;save();closeSheet();OPEN=null;TAB='tbl';render()}
+function delBed(id){if(!confirm('این تخت و همه‌ی یادداشت‌هایش حذف شود؟'))return;
+  S.beds=S.beds.filter(x=>x.id!==id);save();closeSheet();OPEN=null;render()}
 
-/* ============ پرونده‌ی بیمار ============ */
-const SUBS=[['hpi','شرح حال'],['course','سیر روزانه'],['orders','اوردر'],['labs','پاراکلینیک'],['ddx','DDx']];
-const HPI_FIELDS=[['cc','شکایت اصلی'],['hpi','شرح بیماری فعلی (PI)'],['birth','سابقه بارداری و زایمان'],
-  ['vacc','واکسیناسیون'],['feed','تغذیه'],['dev','رشد و تکامل'],['pmh','سابقه بیماری / دارو / آلرژی'],
-  ['fh','سابقه خانوادگی'],['exam','معاینه فیزیکی']];
-
-function ptView(p){
-  const v=vitalRange(p.ageM??60);
-  let h=`<div class="card">
-    <div class="row"><div class="grow"><b style="font-size:16px">${esc(p.dx||'بدون تشخیص')}</b>
-      <div class="muted">${ageText(p)} · ${p.sex==='f'?'دختر':'پسر'}${p.wt?' · '+p.wt+' kg':''} · بستری از ${esc(p.admit||'—')}</div></div></div>
-    <div style="margin-top:7px">${(p.tags||[]).map(t=>`<span class="tag ${(TAGS.find(x=>x[0]===t)||[,'gray'])[1]}">${esc(t)}</span>`).join('')||'<span class="muted">بدون تگ</span>'}</div>
-    ${wtWarn(p)}
-    <hr><div class="muted">نرمال این سن (PALS) — HR ${v.hr} · RR ${v.rr} · SBP ${v.sbp}</div>
-    ${p.wt?`<div class="row" style="margin-top:9px"><input id="dz_mg" type="number" inputmode="decimal" placeholder="دوز mg/kg" class="grow">
-      <button class="btn sm" id="dz_go">محاسبه</button></div><div id="dz_out" class="muted" style="margin-top:5px"></div>`:''}
-  </div>
-  <div class="tabs">${SUBS.map(([k,l])=>`<button class="${k===SUB?'on':''}" onclick="SUB='${k}';render()">${l}</button>`).join('')}</div>`;
-
-  if(SUB==='hpi') h+=`<div class="card">${HPI_FIELDS.map(([k,l])=>
-      `<label>${l}</label><div class="row"><textarea class="grow" data-fld="${k}">${esc(p[k]||'')}</textarea>
-       <button class="mic" data-mic="${k}">🎤</button></div>`).join('')}
-    <button class="btn" style="width:100%;margin-top:12px" id="saveHpi">ذخیره</button></div>`;
-
-  if(SUB==='course') h+=`<div class="card"><h3>افزودن یادداشت امروز</h3>
-    <div class="row"><textarea id="nt" class="grow" placeholder="S / O / A / P — یا فقط دیکته کن"></textarea>
-      <button class="mic" data-mic="_nt">🎤</button></div>
-    <button class="btn sm" style="margin-top:8px" id="addNote">ثبت</button></div>
-    <div class="card">${(p.notes||[]).length?(p.notes||[]).map((n,i)=>
-      `<div class="chk"><div class="grow"><small class="muted">${esc(n.date)}</small><div style="white-space:pre-wrap">${esc(n.text)}</div></div>
-       <button class="x" data-delnote="${i}">×</button></div>`).join(''):'<div class="empty">هنوز یادداشتی نیست.</div>'}</div>`;
-
-  if(SUB==='orders') h+=`<div class="card"><div class="row"><input id="od" class="grow" placeholder="مثلاً CBC, CRP یا Amoxicillin 45mg/kg/day">
-      <button class="mic" data-mic="_od">🎤</button><button class="btn sm" id="addOrd">+</button></div></div>
-    <div class="card">${(p.orders||[]).length?(p.orders||[]).map((o,i)=>
-      `<div class="chk"><input type="checkbox" ${o.done?'checked':''} data-ord="${i}">
-       <span class="grow ${o.done?'done':''}">${esc(o.text)}</span><button class="x" data-delord="${i}">×</button></div>`).join('')
-      :'<div class="empty">اوردری ثبت نشده.</div>'}</div>`;
-
-  if(SUB==='labs') h+=`<div class="card"><label>آزمایش‌ها</label>
-    <div class="row"><textarea class="grow" data-fld="labs" placeholder="CBC: WBC 14.2 ...">${esc(p.labs||'')}</textarea><button class="mic" data-mic="labs">🎤</button></div>
-    <label>تصویربرداری</label><div class="row"><textarea class="grow" data-fld="imaging">${esc(p.imaging||'')}</textarea><button class="mic" data-mic="imaging">🎤</button></div>
-    <label>مشاوره‌ها</label><div class="row"><textarea class="grow" data-fld="consult">${esc(p.consult||'')}</textarea><button class="mic" data-mic="consult">🎤</button></div>
-    <button class="btn" style="width:100%;margin-top:12px" id="saveHpi">ذخیره</button></div>`;
-
-  if(SUB==='ddx'){
-    h+=`<div class="card"><div class="warnbox">قبل از ارسال، خلاصه‌ی <b>بی‌نام</b> ساخته می‌شود و به تو نشان داده می‌شود. نام و هر شناسه‌ای حذف است.</div>
-      <button class="btn" style="width:100%;margin-top:11px" id="goDdx">🧠 ساخت تشخیص افتراقی</button></div>`;
-    h+=(p.ddx||[]).length? `<div class="card">${(p.ddx||[]).map(d=>renderDdx(d)).join('<hr>')}</div>`
-      : '<div class="empty">هنوز تشخیص افتراقی ساخته نشده.</div>';
-  }
-  return h;
-}
-function renderDdx(d){
-  const L=(t,arr,cls)=>arr&&arr.length?`<div class="ddx ${cls}"><b>${t}</b>${arr.map(x=>
-    `<div style="margin-top:4px">• ${esc(typeof x==='string'?x:(x.dx||''))}${x.why?`<div class="muted" style="margin-inline-start:12px">${esc(x.why)}</div>`:''}</div>`).join('')}</div>`:'';
-  return `<small class="muted">${esc(d.date||'')}</small>
-    ${L('⛔ نباید از دست برود','cantMiss' in d?d.cantMiss:[],'cm')}
-    ${L('✅ محتمل‌ترین',d.likely||[],'lk')}
-    ${L('➡️ قدم بعدی',d.next||[],'nx')}
-    <div class="warnbox" style="margin-top:8px">پیشنهاد آموزشی است؛ جایگزین قضاوت بالینی و نظر اتند نیست.</div>`;
-}
-
-function bindPt(p){
-  const $=s=>document.getElementById(s), V=document.getElementById('view');
-  V.querySelectorAll('[data-mic]').forEach(b=>b.onclick=()=>{
-    const k=b.dataset.mic;
-    const el = k==='_nt'?$('nt') : k==='_od'?$('od') : V.querySelector(`[data-fld="${k}"]`);
-    listen(b, txt=>{el.value=(el.value?el.value+' ':'')+txt; el.dispatchEvent(new Event('input'))})});
-  if($('saveHpi'))$('saveHpi').onclick=()=>{
-    V.querySelectorAll('[data-fld]').forEach(t=>p[t.dataset.fld]=t.value.trim());
-    save(); toast('ذخیره شد')};
-  if($('dz_go'))$('dz_go').onclick=()=>{
-    const d=parseFloat($('dz_mg').value); if(!d)return;
-    $('dz_out').innerHTML=`<b>${(d*p.wt).toFixed(1)} mg</b> در هر دوز &nbsp;·&nbsp; تقسیم بر ۲: ${(d*p.wt/2).toFixed(1)} · بر ۳: ${(d*p.wt/3).toFixed(1)} · بر ۴: ${(d*p.wt/4).toFixed(1)} mg`};
-  if($('addNote'))$('addNote').onclick=()=>{const t=$('nt').value.trim();if(!t)return;
-    (p.notes=p.notes||[]).unshift({date:today(),text:t});save();render()};
-  if($('addOrd'))$('addOrd').onclick=()=>{const t=$('od').value.trim();if(!t)return;
-    (p.orders=p.orders||[]).push({text:t,done:false});save();render()};
-  V.querySelectorAll('[data-ord]').forEach(c=>c.onchange=()=>{p.orders[+c.dataset.ord].done=c.checked;save();render()});
-  V.querySelectorAll('[data-delord]').forEach(b=>b.onclick=()=>{p.orders.splice(+b.dataset.delord,1);save();render()});
-  V.querySelectorAll('[data-delnote]').forEach(b=>b.onclick=()=>{p.notes.splice(+b.dataset.delnote,1);save();render()});
-  if($('goDdx'))$('goDdx').onclick=()=>makeDDx(p.id);
-}
-
-/* ============ کارهای راند ============ */
-function todoView(){
-  const rows=[];
-  S.patients.filter(p=>p.ward!=='ترخیص‌شده').forEach(p=>(p.orders||[]).forEach((o,i)=>{
-    if(!o.done)rows.push({p,o,i})}));
-  if(!rows.length)return '<div class="empty">🎉 هیچ کار مانده‌ای نداری.</div>';
-  return `<div class="card">${rows.map(({p,o,i})=>
-    `<div class="chk"><input type="checkbox" data-td="${p.id}:${i}">
-     <div class="grow"><span>${esc(o.text)}</span>
-     <small class="muted">تخت ${esc(p.bed||'؟')} · ${esc(p.dx||'')}</small></div></div>`).join('')}</div>`;
-}
-document.addEventListener('change',e=>{const c=e.target.closest('[data-td]');if(!c)return;
-  const [id,i]=c.dataset.td.split(':'); const p=S.patients.find(x=>x.id===id);
-  p.orders[+i].done=true;save();render()});
-
-/* ============ آمار ============ */
-function statsView(){
-  const all=S.patients, act=all.filter(p=>p.ward!=='ترخیص‌شده');
-  const dx={}; all.forEach(p=>{const k=(p.dx||'نامشخص').trim();dx[k]=(dx[k]||0)+1});
-  const top=Object.entries(dx).sort((a,b)=>b[1]-a[1]).slice(0,8), mx=top[0]?top[0][1]:1;
-  const pr={}; S.procs.forEach(x=>pr[x.type]=(pr[x.type]||0)+1);
-  const open=act.reduce((s,p)=>s+(p.orders||[]).filter(o=>!o.done).length,0);
+/* ═══ آمار ═══ */
+function statView(){
+  const act=S.beds.filter(b=>!b.out);
+  const dx={};S.beds.forEach(b=>{const k=(b.dx||'نامشخص').trim();dx[k]=(dx[k]||0)+1});
+  const top=Object.entries(dx).sort((a,b)=>b[1]-a[1]).slice(0,8),mx=top[0]?top[0][1]:1;
+  const pr={};S.procs.forEach(x=>pr[x.type]=(pr[x.type]||0)+1);
+  const open=act.reduce((s,b)=>s+openTasks(b).length,0);
+  const done=S.beds.reduce((s,b)=>s+(b.items||[]).filter(i=>i.kind==='task'&&i.done).length,0);
   return `<div class="stat">
-      <div><b>${act.length}</b><small>بیمار فعال</small></div>
-      <div><b>${all.length}</b><small>کل بیماران</small></div>
-      <div><b>${S.procs.length}</b><small>پروسیجر</small></div>
-      <div><b>${open}</b><small>کار مانده</small></div></div>
-    <div class="card"><h3>شایع‌ترین تشخیص‌ها</h3>${top.length?top.map(([k,n])=>
-      `<div style="margin-bottom:9px"><div class="row"><span class="grow">${esc(k)}</span><b>${n}</b></div>
-       <div class="bar"><i style="width:${n/mx*100}%"></i></div></div>`).join(''):'<div class="muted">داده‌ای نیست.</div>'}</div>
-    <div class="card"><h3>لاگ‌بوک پروسیجر</h3>
-      <div class="row"><input id="pv" class="grow" placeholder="مثلاً LP، رگ‌گیری، سونداژ، ساکشن">
-        <button class="btn sm" id="pAdd">ثبت</button></div>
-      <div style="margin-top:11px">${Object.entries(pr).length?Object.entries(pr).sort((a,b)=>b[1]-a[1]).map(([k,n])=>
-        `<span class="tag">${esc(k)} × ${n}</span>`).join(''):'<span class="muted">هنوز چیزی ثبت نکرده‌ای.</span>'}</div>
-      <button class="btn ghost sm" style="margin-top:12px" id="csv">خروجی CSV لاگ‌بوک</button></div>
-    <div class="card"><button class="btn ghost" style="width:100%" id="pptTopic">📊 پاورپوینت موضوع آموزشی</button></div>`;
+    <div><b>${act.length}</b><small>تخت فعال</small></div><div><b>${S.beds.length}</b><small>کل بیماران</small></div>
+    <div><b>${done}</b><small>کار انجام‌شده</small></div><div><b>${open}</b><small>کار مانده</small></div></div>
+  <div class="card"><h3>شایع‌ترین تشخیص‌ها</h3>${top.length?top.map(([k,n])=>
+    `<div style="margin-bottom:9px"><div class="row"><span class="grow">${esc(k)}</span><b>${n}</b></div>
+     <div style="height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:4px">
+     <i style="display:block;height:100%;width:${n/mx*100}%;background:var(--brand)"></i></div></div>`).join('')
+    :'<div class="muted">داده‌ای نیست.</div>'}</div>
+  <div class="card"><h3>لاگ‌بوک پروسیجر</h3>
+    <div class="row"><input id="pv" class="grow" placeholder="LP، رگ‌گیری، سونداژ…"><button class="btn sm" id="pa">ثبت</button></div>
+    <div style="margin-top:11px">${Object.entries(pr).length?Object.entries(pr).sort((a,b)=>b[1]-a[1])
+      .map(([k,n])=>`<span class="pill" style="display:inline-block;margin:0 0 5px 5px">${esc(k)} × ${n}</span>`).join('')
+      :'<span class="muted">هنوز چیزی ثبت نکرده‌ای.</span>'}</div>
+    <button class="btn ghost sm" style="margin-top:12px" id="csv">خروجی CSV</button></div>
+  <div class="card"><button class="btn ghost" style="width:100%" id="ppt">📊 پاورپوینت موضوع آموزشی</button></div>`;
 }
-function bindStats(){
-  document.getElementById('pAdd').onclick=()=>{const v=document.getElementById('pv').value.trim();if(!v)return;
-    S.procs.push({type:v,date:today()});save();render()};
-  document.getElementById('csv').onclick=()=>{
-    const csv='﻿تاریخ,پروسیجر\n'+S.procs.map(x=>`${x.date},${x.type}`).join('\n');
-    dl(new Blob([csv],{type:'text/csv'}),'logbook.csv')};
-  document.getElementById('pptTopic').onclick=()=>{
-    const t=prompt('موضوع درس؟ مثلاً: تشنج تب‌دار در کودکان'); if(t)makePPT('topic',null,t)};
+function bindStat(){
+  document.getElementById('pa').onclick=()=>{const v=document.getElementById('pv').value.trim();if(!v)return;
+    S.procs.push({type:v,date:today()});logit('پروسیجر',v,'green');save();render()};
+  document.getElementById('csv').onclick=()=>dl(new Blob(['﻿تاریخ,پروسیجر\n'+
+    S.procs.map(x=>`${x.date},${x.type}`).join('\n')],{type:'text/csv'}),'logbook.csv');
+  document.getElementById('ppt').onclick=()=>{const t=prompt('موضوع درس؟ مثلاً: تشنج تب‌دار در کودکان');if(t)makePPT('topic',null,t)};
 }
 function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 
-/* ============ تنظیمات ============ */
+/* ═══ تنظیمات ═══ */
 function setView(){const s=S.settings;
   return `<div class="card"><h3>اتصال به هوش مصنوعی</h3>
-    <label>آدرس سرویس</label><input id="s_url" value="${esc(s.baseUrl)}">
-    <label>مدل</label><input id="s_model" value="${esc(s.model)}">
-    <label>کلید API (فقط روی همین گوشی ذخیره می‌شود)</label><input id="s_key" type="password" value="${esc(s.apiKey)}" placeholder="sk-...">
-    <div class="warnbox" style="margin-top:9px">کلید فقط در حافظه‌ی همین مرورگر می‌ماند و جایی جز سرویس بالا فرستاده نمی‌شود.</div>
-    <div class="row" style="margin-top:12px"><button class="btn grow" id="s_save">ذخیره</button>
-      <button class="btn ghost" id="s_test">تست اتصال</button></div>
-    <div id="s_out" class="muted" style="margin-top:8px"></div></div>
-  <div class="card"><h3>حریم بیمار</h3>
-    <p class="muted" style="margin:0">همه‌ی داده‌ها فقط روی همین دستگاه است. چیزی به سرور نمی‌رود مگر وقتی خودت دکمه‌ی AI را بزنی — و آن هم فقط خلاصه‌ی بی‌نام، بعد از اینکه با چشم خودت تأییدش کردی.</p></div>
-  <div class="card"><h3>پشتیبان</h3>
-    <div class="row"><button class="btn ghost grow" id="exp">خروجی JSON</button>
-      <button class="btn ghost grow" id="imp">بازیابی</button></div>
-    <input type="file" id="impf" accept=".json" style="display:none"></div>`;
+    <p class="muted" style="margin-top:0">بدون کلید هم کار می‌کند، ولی جمله‌ها را ساده‌تر می‌فهمد و DDx و پاورپوینت ندارد.</p>
+    <label>آدرس سرویس</label><input id="u" value="${esc(s.baseUrl)}">
+    <label>مدل</label><input id="m" value="${esc(s.model)}">
+    <label>کلید API (فقط روی همین گوشی)</label><input id="k" type="password" value="${esc(s.apiKey)}" placeholder="sk-…">
+    <div class="row" style="margin-top:12px"><button class="btn grow" id="sv">ذخیره</button>
+      <button class="btn ghost" id="ts">تست</button></div>
+    <div id="so" class="muted" style="margin-top:8px"></div></div>
+  <div class="card"><h3>حریم بیمار</h3><p class="muted" style="margin:0">
+    همه‌ی داده‌ها فقط روی همین دستگاه است. متن جمله‌هایت برای فهمیده‌شدن به سرویس بالا می‌رود —
+    پس <b>اسم بیمار را نگو</b>، شماره‌ی تخت بگو. برای DDx و پاورپوینت هم خلاصه‌ی بی‌نام ساخته می‌شود
+    و قبل از ارسال نشانت می‌دهد.</p></div>
+  <div class="card"><h3>پشتیبان</h3><div class="row">
+    <button class="btn ghost grow" id="ex">خروجی JSON</button><button class="btn ghost grow" id="im">بازیابی</button></div>
+    <input type="file" id="imf" accept=".json" style="display:none">
+    <button class="btn ghost sm" style="margin-top:9px;color:var(--danger);border-color:var(--danger)" id="wipe">پاک کردن همه‌چیز</button></div>`;
 }
-function bindSet(){const $=s=>document.getElementById(s);
-  $('s_save').onclick=()=>{Object.assign(S.settings,{baseUrl:$('s_url').value.trim().replace(/\/$/,''),
-    model:$('s_model').value.trim(),apiKey:$('s_key').value.trim()});save();toast('ذخیره شد')};
-  $('s_test').onclick=async()=>{$('s_out').innerHTML='<span class="spin"></span> در حال تست…';
-    try{const r=await ai([{role:'user',content:'فقط بنویس: سلام'}]); $('s_out').textContent='✅ وصل شد — '+r.slice(0,60)}
-    catch(e){$('s_out').textContent='❌ '+e.message}};
-  $('exp').onclick=()=>dl(new Blob([JSON.stringify(S)],{type:'application/json'}),'rand-backup.json');
-  $('imp').onclick=()=>$('impf').click();
-  $('impf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
-    r.onload=()=>{try{S=Object.assign({},DEF,JSON.parse(r.result));save();render();toast('بازیابی شد')}catch(x){alert('فایل معتبر نیست')}};r.readAsText(f)};
+function bindSet(){const $=i=>document.getElementById(i);
+  $('sv').onclick=()=>{Object.assign(S.settings,{baseUrl:$('u').value.trim().replace(/\/$/,''),
+    model:$('m').value.trim(),apiKey:$('k').value.trim()});save();toast('ذخیره شد')};
+  $('ts').onclick=async()=>{$('so').innerHTML='<span class="spin"></span> تست…';
+    try{const r=await ai([{role:'user',content:'فقط بنویس: سلام'}]);$('so').textContent='✅ وصل شد — '+r.slice(0,50)}
+    catch(e){$('so').textContent='❌ '+e.message}};
+  $('ex').onclick=()=>dl(new Blob([JSON.stringify(S)],{type:'application/json'}),'rand-backup.json');
+  $('im').onclick=()=>$('imf').click();
+  $('imf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+    r.onload=()=>{try{S=Object.assign({},structuredClone(DEF),JSON.parse(r.result));save();render();toast('بازیابی شد')}
+    catch(x){alert('فایل معتبر نیست')}};r.readAsText(f)};
+  $('wipe').onclick=()=>{if(confirm('همه‌ی تخت‌ها و یادداشت‌ها پاک شود؟'))
+    {const s=S.settings;S=structuredClone(DEF);S.settings=s;save();render()}};
 }
 
-/* ============ تماس با AI ============ */
+/* ═══ AI ═══ */
 async function ai(messages,json){
   const s=S.settings;
   if(!s.apiKey)throw new Error('اول کلید API را در تنظیمات وارد کن.');
   const r=await fetch(s.baseUrl+'/chat/completions',{method:'POST',
     headers:{'Authorization':'Bearer '+s.apiKey,'Content-Type':'application/json'},
-    body:JSON.stringify({model:s.model,messages,temperature:0.2,
-      ...(json?{response_format:{type:'json_object'}}:{})})});
-  if(!r.ok)throw new Error('خطای سرویس ('+r.status+') — کلید یا اسم مدل را چک کن.');
+    body:JSON.stringify({model:s.model,messages,temperature:0.1,...(json?{response_format:{type:'json_object'}}:{})})});
+  if(!r.ok)throw new Error('سرویس جواب نداد ('+r.status+')');
   const d=await r.json();
-  const c=d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
-  if(!c)throw new Error('پاسخ خالی بود.');
+  const c=d?.choices?.[0]?.message?.content; if(!c)throw new Error('پاسخ خالی بود.');
   return c;
 }
-function parseJSON(t){
-  const m=t.match(/\{[\s\S]*\}/); if(!m)throw new Error('پاسخ ساختار درستی نداشت.');
-  return JSON.parse(m[0]);
-}
+function parseJSON(t){const m=t.match(/\{[\s\S]*\}/);if(!m)throw new Error('پاسخ ساختار درستی نداشت.');return JSON.parse(m[0])}
 
-/* ---- خلاصه‌ی بی‌نام: نام، تخت، تاریخ و هر شناسه‌ای حذف می‌شود ---- */
-function brief(p){
+function brief(b){
   const L=[];
-  L.push(`${ageText(p)}، ${p.sex==='f'?'دختر':'پسر'}${p.wt?`، وزن ${p.wt} کیلوگرم`:''}`);
-  const F=[['cc','شکایت اصلی'],['hpi','شرح بیماری'],['birth','بارداری و زایمان'],['vacc','واکسیناسیون'],
-    ['feed','تغذیه'],['dev','رشد و تکامل'],['pmh','سابقه'],['fh','سابقه خانوادگی'],
-    ['exam','معاینه'],['labs','آزمایش'],['imaging','تصویربرداری']];
-  F.forEach(([k,l])=>{if((p[k]||'').trim())L.push(l+': '+p[k].trim())});
-  if(p.dx)L.push('تشخیص کاری: '+p.dx);
+  L.push([ageText(b),b.sex?(b.sex==='f'?'دختر':'پسر'):'',b.wt?`وزن ${b.wt} کیلوگرم`:''].filter(Boolean).join('، ')||'کودک');
+  if(b.dx)L.push('تشخیص کاری: '+b.dx);
+  const g=k=>(b.items||[]).filter(i=>i.kind===k).map(i=>i.text);
+  if(g('result').length)L.push('یافته‌ها و جواب‌ها: '+g('result').join(' / '));
+  if(g('note').length)L.push('سیر: '+g('note').join(' / '));
+  const t=(b.items||[]).filter(i=>i.kind==='task');
+  if(t.length)L.push('اقدامات: '+t.map(i=>i.text+(i.done?' (انجام شد)':' (مانده)')).join(' / '));
   return scrub(L.join('\n'));
 }
-// تور ایمنی: اگر کاربر ناخواسته شناسه‌ای داخل متن تایپ کرده باشد
-function scrub(t){
-  return t.replace(/\b\d{10}\b/g,'[حذف‌شده]')            // کد ملی
-          .replace(/\b09\d{9}\b/g,'[حذف‌شده]')           // موبایل
-          .replace(/پرونده\s*:?\s*\d+/g,'[حذف‌شده]');
-}
+const scrub=t=>t.replace(/\b\d{10}\b/g,'[حذف‌شده]').replace(/\b09\d{9}\b/g,'[حذف‌شده]')
+                .replace(/پرونده\s*:?\s*\d+/g,'[حذف‌شده]');
 
-/* ---- تشخیص افتراقی ---- */
 function makeDDx(id){
-  const p=S.patients.find(x=>x.id===id); const b=brief(p);
+  const b=S.beds.find(x=>x.id===id);
   sheet(`<h3>این متن فرستاده می‌شود</h3>
-    <div class="warnbox">نام، تخت و هر شناسه‌ای حذف شده. اگر چیزی اضافه است، الان حذفش کن.</div>
-    <textarea id="bf" style="min-height:190px;margin-top:9px">${esc(b)}</textarea>
-    <div class="row" style="margin-top:12px"><button class="btn grow" id="go">ارسال</button>
+    <div class="warnbox">بی‌نام و بدون شماره‌ی تخت. اگر چیزی اضافه است، الان حذفش کن.</div>
+    <textarea id="bf" style="min-height:180px;margin-top:9px">${esc(brief(b))}</textarea>
+    <div class="row" style="margin-top:12px"><button class="btn grow" id="g">ارسال</button>
       <button class="btn dim" onclick="closeSheet()">انصراف</button></div>
-    <div id="out" class="muted" style="margin-top:9px"></div>`);
-  document.getElementById('go').onclick=async()=>{
-    const o=document.getElementById('out'); o.innerHTML='<span class="spin"></span> در حال پرسیدن…';
-    document.getElementById('go').disabled=true;
-    try{
-      const t=await ai([{role:'system',content:
-        'تو دستیار آموزشی یک اینترن بخش اطفال هستی. بر اساس خلاصه‌ی بی‌نام بیمار، تشخیص‌های افتراقی بده. '+
-        'ملاحظات اختصاصی اطفال (سن، وزن، واکسیناسیون، رشد) را لحاظ کن. فقط JSON برگردان با این شکل: '+
-        '{"cantMiss":[{"dx":"","why":""}],"likely":[{"dx":"","why":""}],"next":[{"dx":"","why":""}]} — '+
-        'cantMiss یعنی تشخیص‌های کشنده که نباید از دست بروند، likely یعنی محتمل‌ترین‌ها با ذکر شواهد له و علیه، '+
-        'next یعنی قدم تشخیصی بعدی و اینکه چه چیزی را افتراق می‌دهد. فارسی بنویس، اصطلاح پزشکی را انگلیسی بگذار.'},
-        {role:'user',content:document.getElementById('bf').value}],true);
-      const d=parseJSON(t); d.date=today();
-      (p.ddx=p.ddx||[]).unshift(d); save(); closeSheet(); SUB='ddx'; render();
-    }catch(e){o.textContent='❌ '+e.message; document.getElementById('go').disabled=false}
-  };
+    <div id="o" class="muted" style="margin-top:9px"></div>`);
+  document.getElementById('g').onclick=async()=>{
+    const o=document.getElementById('o');o.innerHTML='<span class="spin"></span> در حال پرسیدن…';
+    document.getElementById('g').disabled=true;
+    try{const t=await ai([{role:'system',content:
+      'تو دستیار آموزشی یک اینترن اطفال هستی. ملاحظات سن، وزن، واکسیناسیون و رشد را لحاظ کن. فقط JSON بده: '+
+      '{"cantMiss":[{"dx":"","why":""}],"likely":[{"dx":"","why":""}],"next":[{"dx":"","why":""}]} — '+
+      'cantMiss تشخیص‌های کشنده‌ای که نباید از دست بروند، likely محتمل‌ترین‌ها با شواهد له و علیه، '+
+      'next قدم تشخیصی بعدی و اینکه چه چیزی را افتراق می‌دهد. فارسی بنویس، اصطلاح پزشکی انگلیسی.'},
+      {role:'user',content:document.getElementById('bf').value}],true);
+      const d=parseJSON(t);d.date=now();(b.ddx=b.ddx||[]).unshift(d);
+      logit('تخت '+b.bed,'تشخیص افتراقی ساخته شد','');save();closeSheet();OPEN=b.id;render();
+    }catch(e){o.textContent='❌ '+e.message;document.getElementById('g').disabled=false}};
+}
+function renderDdx(d){
+  const L=(t,a,c)=>a&&a.length?`<div class="ddx ${c}"><b>${t}</b>${a.map(x=>
+    `<div style="margin-top:4px">• ${esc(typeof x==='string'?x:x.dx||'')}${x.why?`<div class="muted" style="margin-inline-start:12px">${esc(x.why)}</div>`:''}</div>`).join('')}</div>`:'';
+  return `<small class="muted">${esc(d.date||'')}</small>
+    ${L('⛔ نباید از دست برود',d.cantMiss,'cm')}${L('✅ محتمل‌ترین',d.likely,'lk')}${L('➡️ قدم بعدی',d.next,'nx')}
+    <div class="warnbox" style="margin-top:8px">پیشنهاد آموزشی است؛ جایگزین قضاوت بالینی و نظر اتند نیست.</div>`;
 }
 
-/* ---- پاورپوینت ---- */
 async function makePPT(kind,id,topic){
-  const p=id?S.patients.find(x=>x.id===id):null;
-  const src = p? brief(p)+((p.notes||[]).length?'\nسیر بستری: '+p.notes.map(n=>n.text).join(' / '):'') : topic;
+  const b=id?S.beds.find(x=>x.id===id):null;
   sheet(`<h3>${kind==='case'?'پاورپوینت معرفی کیس':'پاورپوینت موضوع آموزشی'}</h3>
-    ${p?'<div class="warnbox">کیس بی‌نام است. متن زیر فرستاده می‌شود.</div>':''}
-    <textarea id="bf" style="min-height:150px;margin-top:9px">${esc(src)}</textarea>
-    <div class="row" style="margin-top:12px"><button class="btn grow" id="go">بساز</button>
+    ${b?'<div class="warnbox">کیس بی‌نام است. متن زیر فرستاده می‌شود.</div>':''}
+    <textarea id="bf" style="min-height:150px;margin-top:9px">${esc(b?brief(b):topic)}</textarea>
+    <div class="row" style="margin-top:12px"><button class="btn grow" id="g">بساز</button>
       <button class="btn dim" onclick="closeSheet()">انصراف</button></div>
-    <div id="out" class="muted" style="margin-top:9px"></div>`);
-  document.getElementById('go').onclick=async()=>{
-    const o=document.getElementById('out'); o.innerHTML='<span class="spin"></span> در حال ساخت اسلایدها…';
-    document.getElementById('go').disabled=true;
-    try{
-      const sys = kind==='case'
-        ? 'یک دک معرفی کیس اطفال برای ژورنال‌کلاب بساز. ترتیب اسلایدها: عنوان، شکایت اصلی، شرح بیماری، سابقه (بارداری/واکسن/تغذیه/رشد)، معاینه، پاراکلینیک، تشخیص افتراقی، سیر بستری، نکات کلیدی (Take-home).'
-        : 'یک دک آموزشی اطفال درباره‌ی موضوع داده‌شده بساز: تعریف، اپیدمیولوژی، تظاهرات بالینی، تشخیص افتراقی، رویکرد تشخیصی، درمان، نکات کلیدی.';
+    <div id="o" class="muted" style="margin-top:9px"></div>`);
+  document.getElementById('g').onclick=async()=>{
+    const o=document.getElementById('o');o.innerHTML='<span class="spin"></span> در حال ساخت اسلایدها…';
+    document.getElementById('g').disabled=true;
+    try{const sys=kind==='case'
+      ?'یک دک معرفی کیس اطفال بساز. ترتیب: عنوان، شکایت اصلی، شرح بیماری، سابقه، معاینه، پاراکلینیک، تشخیص افتراقی، سیر بستری، نکات کلیدی.'
+      :'یک دک آموزشی اطفال بساز: تعریف، اپیدمیولوژی، تظاهرات بالینی، تشخیص افتراقی، رویکرد تشخیصی، درمان، نکات کلیدی.';
       const t=await ai([{role:'system',content:sys+
-        ' فقط JSON برگردان: {"title":"","subtitle":"","slides":[{"h":"عنوان اسلاید","b":["بولت ۱","بولت ۲"]}]}'+
+        ' فقط JSON: {"title":"","subtitle":"","slides":[{"h":"","b":["",""]}]}'+
         ' بین ۸ تا ۱۲ اسلاید، هر اسلاید حداکثر ۵ بولت و هر بولت حداکثر ۱۵ کلمه. فارسی، اصطلاح پزشکی انگلیسی.'},
         {role:'user',content:document.getElementById('bf').value}],true);
-      const d=parseJSON(t); buildPPT(d); closeSheet(); toast('فایل ساخته شد ✔');
-    }catch(e){o.textContent='❌ '+e.message; document.getElementById('go').disabled=false}
-  };
+      buildPPT(parseJSON(t));closeSheet();
+    }catch(e){o.textContent='❌ '+e.message;document.getElementById('g').disabled=false}};
 }
 function buildPPT(d){
-  const P=new PptxGenJS(); P.layout='LAYOUT_16x9'; P.rtlMode=true;
-  const F='Tahoma', TEAL='0F766E';
-  let s=P.addSlide(); s.background={color:'F8FAFC'};
-  s.addText(d.title||'معرفی کیس',{x:.6,y:2,w:8.8,h:1,fontSize:34,bold:true,color:TEAL,fontFace:F,align:'right',rtlMode:true});
+  const P=new PptxGenJS();P.layout='LAYOUT_16x9';P.rtlMode=true;
+  const F='Tahoma',T='0F766E';
+  let s=P.addSlide();s.background={color:'F8FAFC'};
+  s.addText(d.title||'معرفی کیس',{x:.6,y:2,w:8.8,h:1,fontSize:34,bold:true,color:T,fontFace:F,align:'right',rtlMode:true});
   s.addText(d.subtitle||'',{x:.6,y:3.05,w:8.8,h:.6,fontSize:17,color:'475569',fontFace:F,align:'right',rtlMode:true});
-  (d.slides||[]).forEach(sl=>{
-    const t=P.addSlide();
-    t.addText(sl.h||'',{x:.5,y:.35,w:9,h:.75,fontSize:25,bold:true,color:TEAL,fontFace:F,align:'right',rtlMode:true});
-    t.addShape(P.ShapeType.rect,{x:.5,y:1.12,w:9,h:.035,fill:{color:TEAL}});
+  (d.slides||[]).forEach(sl=>{const t=P.addSlide();
+    t.addText(sl.h||'',{x:.5,y:.35,w:9,h:.75,fontSize:25,bold:true,color:T,fontFace:F,align:'right',rtlMode:true});
+    t.addShape(P.ShapeType.rect,{x:.5,y:1.12,w:9,h:.035,fill:{color:T}});
     t.addText((sl.b||[]).map(x=>({text:String(x),options:{bullet:{code:'25CF'},breakLine:true}})),
-      {x:.6,y:1.4,w:8.8,h:3.8,fontSize:17,color:'1F2937',fontFace:F,align:'right',rtlMode:true,lineSpacingMultiple:1.35});
-  });
-  const e=P.addSlide();
-  e.addText('این دک با کمک هوش مصنوعی تهیه شده و پیش از ارائه باید بازبینی شود.',
+      {x:.6,y:1.4,w:8.8,h:3.8,fontSize:17,color:'1F2937',fontFace:F,align:'right',rtlMode:true,lineSpacingMultiple:1.35})});
+  P.addSlide().addText('این دک با کمک هوش مصنوعی تهیه شده و پیش از ارائه باید بازبینی شود.',
     {x:.6,y:2.4,w:8.8,h:1,fontSize:15,color:'92400E',fontFace:F,align:'center',rtlMode:true});
   const name=(d.title||'case').replace(/[\\/:*?"<>|]/g,'-').slice(0,40)+'.pptx';
   P.write({outputType:'blob'}).then(async blob=>{
     const f=new File([blob],name,{type:'application/vnd.openxmlformats-officedocument.presentationml.presentation'});
     if(navigator.canShare&&navigator.canShare({files:[f]})){
-      try{ await navigator.share({files:[f],title:name}); return }catch(e){ if(e.name==='AbortError')return }
-    }
-    dl(blob,name);
-  });
+      try{await navigator.share({files:[f],title:name});toast('آماده شد ✔');return}catch(e){if(e.name==='AbortError')return}}
+    dl(blob,name);toast('فایل ذخیره شد ✔')});
 }
 
-/* ---- گزارش برای HIS ---- */
 function copyReport(id){
-  const p=S.patients.find(x=>x.id===id);
-  let t=`تخت ${p.bed||''} — ${p.name||''}\n${ageText(p)}، ${p.sex==='f'?'دختر':'پسر'}${p.wt?`، ${p.wt} kg`:''}\nتشخیص: ${p.dx||''}\n\n`;
-  HPI_FIELDS.forEach(([k,l])=>{if((p[k]||'').trim())t+=l+':\n'+p[k].trim()+'\n\n'});
-  ['labs','imaging','consult'].forEach(k=>{if((p[k]||'').trim())t+=({labs:'آزمایش',imaging:'تصویربرداری',consult:'مشاوره'})[k]+':\n'+p[k].trim()+'\n\n'});
-  if((p.notes||[]).length)t+='سیر بستری:\n'+p.notes.map(n=>`${n.date}: ${n.text}`).join('\n')+'\n\n';
-  const un=(p.orders||[]).filter(o=>!o.done); if(un.length)t+='اوردرهای مانده:\n'+un.map(o=>'- '+o.text).join('\n');
+  const b=S.beds.find(x=>x.id===id);
+  let t=`تخت ${b.bed}\n${[ageText(b),b.sex?(b.sex==='f'?'دختر':'پسر'):'',b.wt?b.wt+' kg':''].filter(Boolean).join('، ')}\nتشخیص: ${b.dx||'—'}\n\n`;
+  const g=(k,l)=>{const a=(b.items||[]).filter(i=>i.kind===k);
+    if(a.length)t+=l+':\n'+a.map(i=>`- ${i.text}${i.kind==='task'?(i.done?' (انجام شد)':' (مانده)'):''} [${i.date}]`).join('\n')+'\n\n'};
+  g('note','سیر بیمار');g('result','جواب‌ها و یافته‌ها');g('task','اقدامات');
   navigator.clipboard.writeText(t).then(()=>{closeSheet();toast('گزارش کپی شد')},()=>alert(t));
 }
 
-/* ============ دیکته‌ی صوتی ============ */
+/* ═══ صدا ═══ */
 let REC=null;
-function listen(btn,cb){
+function listen(btn,hint,cb){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR)return toast('دیکته‌ی درون‌برنامه‌ای در دسترس نیست — از دکمه‌ی 🎤 روی کیبورد آیفون استفاده کن');
+  if(!SR){hint.textContent='دیکته‌ی درون‌برنامه‌ای نیست — از دکمه‌ی 🎤 کیبورد آیفون استفاده کن';
+    document.getElementById('txt').focus();return}
   if(REC){REC.stop();REC=null;return}
-  const r=new SR(); REC=r; r.lang='fa-IR'; r.interimResults=false; r.continuous=false;
-  btn.classList.add('rec');
-  r.onresult=e=>cb(e.results[0][0].transcript);
-  r.onerror=e=>toast('صدا گرفته نشد ('+e.error+')');
-  r.onend=()=>{btn.classList.remove('rec');REC=null};
+  const r=new SR();REC=r;r.lang='fa-IR';r.interimResults=true;r.continuous=false;
+  btn.classList.add('rec');hint.textContent='بگو…';
+  let fin='';
+  r.onresult=e=>{let iv='';for(const x of e.results)x.isFinal?fin+=x[0].transcript:iv+=x[0].transcript;
+    hint.textContent=(fin+iv).slice(-70)||'بگو…'};
+  r.onerror=e=>hint.textContent='صدا گرفته نشد ('+e.error+')';
+  r.onend=()=>{btn.classList.remove('rec');REC=null;
+    if(fin.trim()){hint.textContent='بزن و حرف بزن — یا پایین تایپ کن';cb(fin.trim())}
+    else hint.textContent='چیزی نشنیدم، دوباره بزن'};
   r.start();
 }
 
-/* ============ UI کمکی ============ */
-function sheet(html){closeSheet();
-  const d=document.createElement('div'); d.className='modal'; d.id='modal';
-  d.innerHTML='<div class="sheet">'+html+'</div>';
-  d.onclick=e=>{if(e.target===d)closeSheet()};
-  document.body.appendChild(d)}
+/* ═══ UI ═══ */
+function sheet(h){closeSheet();const d=document.createElement('div');d.className='modal';d.id='modal';
+  d.innerHTML='<div class="sheet">'+h+'</div>';d.onclick=e=>{if(e.target===d)closeSheet()};document.body.appendChild(d)}
 function closeSheet(){const m=document.getElementById('modal');if(m)m.remove()}
 function toast(t){const e=document.createElement('div');
   e.style.cssText='position:fixed;bottom:88px;inset-inline:0;margin:auto;width:max-content;max-width:88%;z-index:99;background:#111827;color:#fff;padding:10px 17px;border-radius:999px;font-size:14px';
