@@ -221,17 +221,19 @@ function bindAsk(){
 function logit(t,x,c){S.log.unshift({t,x,c,at:now()}); S.log=S.log.slice(0,300)}
 
 /* ═══ فهم جمله ═══ */
-let UNDO=null, LASTCLEAN='', BYAI=false;
+let UNDO=null, LASTCLEAN='', LASTANSWER='', BYAI=false;
 async function submit(text){
   if(!text||!text.trim())return;
   const o=document.getElementById('out'); if(!o)return;
   o.innerHTML='<span class="spin"></span> '+esc(text.slice(0,60));
-  let acts=[], err=''; LASTCLEAN=''; BYAI=false;
+  let acts=[], err=''; LASTCLEAN=''; LASTANSWER=''; BYAI=false;
   if(S.settings.apiKey){
     try{ acts = await parseAI(text); BYAI=true }
     catch(e){ err=e.message; acts = parseLocal(text) }   // سرویس نشد؟ خودمان می‌فهمیم
   } else acts = parseLocal(text);
   if(!acts.length){
+    if(LASTANSWER){ o.innerHTML=`<div class="msg assistant" style="max-width:100%">${esc(LASTANSWER)}</div>`;
+      logit('پرسش',text.slice(0,60),'');save();return}
     o.innerHTML='<div class="warnbox">نفهمیدم کدام تخت. یک بار بگو «تخت ۱۲…» تا یادم بماند.</div>'
       +(LASTCLEAN?`<div class="clean">خواند: ${esc(LASTCLEAN)}</div>`:'');
     return}
@@ -244,13 +246,15 @@ async function submit(text){
       ? `<div class="clean">شنید: «${esc(text.slice(0,90))}»<br>خواند: <b>${esc(LASTCLEAN.slice(0,120))}</b></div>`:'')
     + (err?`<div class="warnbox" style="display:block;margin-bottom:6px">سرویس نشد (${esc(err.slice(0,60))}) — خودم فهمیدم.</div>`:'')
     + done.map(d=>`<span class="pill ${d.c||''}" style="display:inline-block;margin:0 0 4px 4px">${esc(d.t)}</span>`).join('')
-    + ' <button class="lnk" onclick="undo()">برگردان</button>';
+    + ' <button class="lnk" onclick="undo()">برگردان</button>'
+    + (BYAI?'':'<div class="muted" style="font-size:11.5px;margin-top:5px">بدون کلید API — حالت ساده</div>');
 }
 function undo(){ if(!UNDO)return; const u=JSON.parse(UNDO);
   S.beds=u.beds;S.log=u.log;UNDO=null;save();render();toast('برگردانده شد') }
 
 /* آخرین تختی که درباره‌اش حرف زدیم — تا لازم نباشد هر بار بگویی */
 let LASTBED=null;
+
 
 const W2N={'یک':1,'دو':2,'سه':3,'چهار':4,'پنج':5,'شش':6,'شیش':6,'هفت':7,'هشت':8,'نه':9,'ده':10,
  'یازده':11,'دوازده':12,'سیزده':13,'چهارده':14,'پانزده':15,'پونزده':15,'شانزده':16,'شونزده':16,
@@ -373,7 +377,7 @@ async function parseAI(text){
   const beds=S.beds.map(b=>b.bed).join('، ')||'—';
   const t=await ai([{role:'system',content:
 `تو دستیار یک اینترن بخش اطفال هستی. جمله‌ی گفتاری او را به فهرست عمل تبدیل کن. فقط JSON برگردان:
-{"clean":"متن تصحیح‌شده","actions":[{"bed":"12","kind":"...","text":"...","ageM":20,"wt":11.5,"sex":"m","dx":"...",
+{"clean":"متن تصحیح‌شده","answer":"","actions":[{"bed":"12","kind":"...","text":"...","ageM":20,"wt":11.5,"sex":"m","dx":"...",
 "temp":38.5,"hr":120,"rr":30,"bp":"90/60","spo2":97,"name":"WBC","val":"14.2"}]}
 
 متن از دیکته‌ی صوتی می‌آید، پس اول آن را تصحیح کن و در "clean" بگذار:
@@ -394,10 +398,12 @@ kind یکی از این‌هاست:
 - "discharge" ترخیص.
 - "ddx"    وقتی صریحاً تشخیص افتراقی خواست.
 تخت‌های موجود: ${beds}. شماره‌ی تخت را با رقم انگلیسی بده. متن را کوتاه و تمیز بنویس، بدون «تخت N».
-اگر شماره‌ی تخت گفته نشد و تخت قبلی هم نداریم، actions را خالی بگذار.`},
+اگر جمله یک سؤال یا درخواست مشورت بود (نه گزارش کار)، actions را خالی بگذار و
+جوابِ کوتاه و عملی را در فیلد "answer" بنویس — فارسی، اصطلاح پزشکی انگلیسی، با ذکر اینکه
+پیشنهاد آموزشی است. اگر شماره‌ی تخت گفته نشد و تخت جاری هم نداریم، هر دو را خالی بگذار.`},
     {role:'user',content:deName(text)}],true);
   const d=parseJSON(t);
-  LASTCLEAN=(d.clean||'').trim();
+  LASTCLEAN=(d.clean||'').trim(); LASTANSWER=(d.answer||'').trim();
   let out=(d.actions||[]).filter(a=>a&&a.bed!=null).map(a=>({...a,bed:fixNum(a.bed)}));
   if(out.length)LASTBED=out[out.length-1].bed;
   /* نام را خودمان محلی برمی‌داریم — به سرویس نرفته */
@@ -409,7 +415,9 @@ kind یکی از این‌هاست:
 function apply(acts){
   const sum=[], added=new Set();
   for(const a of acts){
+    const isNew=!S.beds.some(x=>x.bed===fixNum(String(a.bed)).trim());
     const b=bedOf(a.bed,true); if(!b)continue;
+    if(isNew)sum.push({t:'تخت '+b.bed+' تازه ساخته شد',c:'amber'});
     const txt=(a.text||'').trim();
     if(a.kind==='info'){
       if(a.ageM!=null)b.ageM=+a.ageM; if(a.wt!=null)b.wt=+a.wt;
