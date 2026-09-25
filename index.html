@@ -174,6 +174,7 @@ function askView(){
     <p class="hint" id="hint">بزن و حرف بزن — یا پایین تایپ کن</p>
     <div class="row"><textarea id="txt" class="grow" placeholder="مثلاً: تخت ۱۲ سی‌بی‌سی و سی‌آرپی فرستادیم، تبش ۳۹ بود"></textarea></div>
     <button class="btn" id="go" style="width:100%;margin-top:9px">ثبت کن</button>
+    <p class="muted" style="margin:7px 0 0;font-size:12px">اگر میکروفون بالا کار نکرد، روی کادر بزن و 🎤 کیبورد آیفون را بگیر — همان کار را می‌کند.</p>
     <div id="out" class="muted" style="margin-top:9px"></div></div>
   <div class="card"><h3>چی می‌توانی بگویی</h3><div class="ex">
     «تخت ۱۲، پسر ۲۰ ماهه، ۱۱ کیلو، تشنج تب‌دار»<br>
@@ -527,22 +528,52 @@ function copyReport(id){
 }
 
 /* ═══ صدا ═══ */
+/* روی آیفون، دیکته‌ی وب در حالت نصب‌شده اغلب اجازه نمی‌گیرد.
+   پس اول صریح اجازه می‌گیریم، و اگر نشد به دیکته‌ی کیبورد خود iOS پاس می‌دهیم. */
 let REC=null;
-function listen(btn,hint,cb){
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||
+  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const standalone=window.navigator.standalone===true||
+  matchMedia('(display-mode: standalone)').matches;
+
+function useKeyboard(hint,why){
+  const t=document.getElementById('txt');
+  hint.innerHTML=esc(why)+'<br><b>روی کادر پایین بزن و 🎤 کیبورد آیفون را بگیر.</b>';
+  if(t){t.focus();t.scrollIntoView({block:'center',behavior:'smooth'})}
+}
+
+async function listen(btn,hint,cb){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){hint.textContent='دیکته‌ی درون‌برنامه‌ای نیست — از دکمه‌ی 🎤 کیبورد آیفون استفاده کن';
-    document.getElementById('txt').focus();return}
+  if(!SR)return useKeyboard(hint,'این مرورگر دیکته‌ی خودکار ندارد.');
   if(REC){REC.stop();REC=null;return}
+
+  /* اجازه‌ی میکروفون را صریح بگیر تا iOS پرامپت را نشان دهد */
+  if(navigator.mediaDevices?.getUserMedia){
+    hint.textContent='اجازه‌ی میکروفون…';
+    try{ const st=await navigator.mediaDevices.getUserMedia({audio:true});
+         st.getTracks().forEach(t=>t.stop()) }
+    catch(e){
+      return useKeyboard(hint, standalone&&isIOS
+        ? 'iOS در حالت نصب‌شده اجازه‌ی میکروفون نداد.'
+        : 'اجازه‌ی میکروفون داده نشد. (Settings ← Safari ← Microphone)');
+    }
+  }
+
   const r=new SR();REC=r;r.lang='fa-IR';r.interimResults=true;r.continuous=false;
   btn.classList.add('rec');hint.textContent='بگو…';
-  let fin='';
+  let fin='',failed=false;
   r.onresult=e=>{let iv='';for(const x of e.results)x.isFinal?fin+=x[0].transcript:iv+=x[0].transcript;
     hint.textContent=(fin+iv).slice(-70)||'بگو…'};
-  r.onerror=e=>hint.textContent='صدا گرفته نشد ('+e.error+')';
+  r.onerror=e=>{failed=true;
+    if(e.error==='not-allowed'||e.error==='service-not-allowed')
+      useKeyboard(hint,'iOS اجازه‌ی دیکته‌ی درون‌برنامه‌ای را نداد.');
+    else if(e.error==='no-speech')hint.textContent='چیزی نشنیدم، دوباره بزن';
+    else if(e.error==='network')useKeyboard(hint,'دیکته‌ی آنلاین در دسترس نیست.');
+    else hint.textContent='صدا گرفته نشد ('+e.error+')'};
   r.onend=()=>{btn.classList.remove('rec');REC=null;
     if(fin.trim()){hint.textContent='بزن و حرف بزن — یا پایین تایپ کن';cb(fin.trim())}
-    else hint.textContent='چیزی نشنیدم، دوباره بزن'};
-  r.start();
+    else if(!failed)hint.textContent='چیزی نشنیدم، دوباره بزن'};
+  try{r.start()}catch(e){useKeyboard(hint,'دیکته شروع نشد.')}
 }
 
 /* ═══ UI ═══ */
