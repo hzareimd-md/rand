@@ -58,7 +58,7 @@ nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;st
 
 /* ---- جدول ---- */
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);border:1px solid var(--line);background:var(--card)}
-table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:600px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:680px}
 th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
 th{background:var(--bg);font-size:12px;color:var(--muted);font-weight:600;position:sticky;top:0}
 tr:last-child td{border-bottom:0}
@@ -85,6 +85,8 @@ td.b{font-weight:800;color:var(--brand);font-size:15px;white-space:nowrap}
 .muted{color:var(--muted);font-size:13px}
 h3{font-size:14.5px;margin:0 0 9px}
 hr{border:0;border-top:1px solid var(--line);margin:13px 0}
+.cur{background:var(--soft);color:var(--brand);border-radius:10px;padding:7px 11px;font-size:13px;margin-bottom:4px}
+.lnk{background:0;border:0;color:var(--brand);font:inherit;font-size:12.5px;text-decoration:underline;padding:0 6px}
 .ddx{border-inline-start:3px solid var(--line);padding-inline-start:10px;margin-bottom:11px}
 .ddx.cm{border-color:var(--danger)}.ddx.lk{border-color:var(--ok)}.ddx.nx{border-color:var(--brand)}
 .stat{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:11px}
@@ -159,6 +161,7 @@ function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===TAB&&!OPEN));
   B.style.display=OPEN?'':'none'; A.style.display='none';
   if(OPEN){const b=S.beds.find(x=>x.id===OPEN); if(!b){OPEN=null;return render()}
+    LASTBED=b.bed;
     T.textContent='تخت '+b.bed; A.style.display=''; A.onclick=()=>bedMenu(b);
     V.innerHTML=bedView(b); bindBed(b); window.scrollTo(0,0); return}
   if(TAB==='ask'){T.textContent='راند';V.innerHTML=askView();bindAsk()}
@@ -170,19 +173,23 @@ function render(){
 
 /* ═══ صفحه‌ی دستیار ═══ */
 function askView(){
+  const cur=LASTBED?S.beds.find(b=>b.bed===LASTBED):null;
   return `<div class="card" style="text-align:center">
+    ${cur?`<div class="cur">در حال کار روی <b>تخت ${esc(cur.bed)}</b>${cur.name?' — '+esc(cur.name):''}
+      <button class="lnk" onclick="LASTBED=null;render()">تغییر</button></div>`:''}
     <button class="bigmic" id="mic">🎤</button>
-    <p class="hint" id="hint">بزن و حرف بزن — یا پایین تایپ کن</p>
-    <div class="row"><textarea id="txt" class="grow" placeholder="مثلاً: تخت ۱۲ سی‌بی‌سی و سی‌آرپی فرستادیم، تبش ۳۹ بود"></textarea></div>
-    <button class="btn" id="go" style="width:100%;margin-top:9px">ثبت کن</button>
-    <p class="muted" style="margin:7px 0 0;font-size:12px">آیفون دیکته‌ی درون‌برنامه‌ای نمی‌دهد؛ 🎤 کیبورد خودش همان کار را می‌کند و فارسی را بهتر می‌گیرد.</p>
+    <p class="hint" id="hint">بزن و حرف بزن${cur?' — لازم نیست باز بگویی تخت چند':''}</p>
+    <textarea id="txt" placeholder="${cur?'…یا اینجا تایپ کن و Enter بزن':'مثلاً: تخت ۱۲، اسمش سارا، دختر ۲۰ ماهه، ۱۱ کیلو، تشنج تب‌دار'}"></textarea>
+    <p class="muted" style="margin:6px 0 0;font-size:12px">با Enter ثبت می‌شود · Shift+Enter خط بعد</p>
     <div id="out" class="muted" style="margin-top:9px"></div></div>
-  <div class="card"><h3>چی می‌توانی بگویی</h3><div class="ex">
-    «تخت ۱۲، پسر ۲۰ ماهه، ۱۱ کیلو، تشنج تب‌دار»<br>
-    «برای تخت ۱۲ سی‌بی‌سی و سی‌آرپی بفرست»<br>
-    «تخت ۱۲ سی‌بی‌سی‌اش آمد، WBC چهارده»<br>
-    «تخت ۷ رو انجام دادم» · «تخت ۷ ال‌پی شد»<br>
-    «تخت ۹ رو ترخیص کن»</div></div>
+  <div class="card"><h3>چطور حرف بزنی</h3><div class="ex">
+    <b>۱. اول بیمار را معرفی کن</b><br>
+    «تخت ۱۲، اسمش سارا رضایی، دختر ۲۰ ماهه، ۱۱ کیلو، تشخیص تشنج تب‌دار»<br><br>
+    <b>۲. بعد فقط حرف بزن — تخت یادش می‌ماند</b><br>
+    «سی‌بی‌سی و سی‌آرپی بفرست» · «جواب آمد، WBC چهارده»<br>
+    «تبش ۳۹ بود» · «ال‌پی انجام دادم» · «ترخیص شد»<br><br>
+    <b>۳. تخت عوض شد؟ اولش بگو</b><br>
+    «تخت ۷ تب کرد» — از آن به بعد روی ۷ است.</div></div>
   <div class="card"><h3>امروز چه کردی</h3>
     ${S.log.length?S.log.slice(0,25).map(l=>`<div class="log">
       <span class="pill ${l.c||''}">${esc(l.t)}</span>
@@ -191,38 +198,109 @@ function askView(){
 }
 function bindAsk(){
   const $=i=>document.getElementById(i);
-  if(isIOS&&standalone)$('hint').innerHTML='بزن، بعد <b>🎤 کیبورد</b> را بگیر و حرف بزن';
-  $('mic').onclick=()=>listen($('mic'),$('hint'),t=>{$('txt').value=(($('txt').value+' '+t).trim());$('go').click()});
-  $('go').onclick=()=>submit($('txt').value.trim());
+  if(isIOS&&standalone&&!(S.settings.sttModel&&S.settings.apiKey))
+    $('hint').innerHTML='بزن، بعد <b>🎤 کیبورد</b> را بگیر و حرف بزن';
+  $('mic').onclick=()=>listen($('mic'),$('hint'),t=>submit(t));   // بعد از صدا خودش ثبت می‌کند
+  $('txt').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();
+    const v=$('txt').value.trim();$('txt').value='';submit(v)}};
 }
+
 function logit(t,x,c){S.log.unshift({t,x,c,at:now()}); S.log=S.log.slice(0,300)}
 
 /* ═══ فهم جمله ═══ */
+let UNDO=null;
 async function submit(text){
-  if(!text)return;
-  const $=i=>document.getElementById(i), o=$('out');
-  o.innerHTML='<span class="spin"></span> در حال فهمیدن…'; $('go').disabled=true;
-  try{
-    const acts = S.settings.apiKey ? await parseAI(text) : parseLocal(text);
-    if(!acts.length){o.textContent='نفهمیدم به کدام تخت مربوط است. اولش بگو «تخت ۱۲…».';$('go').disabled=false;return}
-    apply(acts); $('txt').value=''; save(); render();
-  }catch(e){ o.innerHTML='❌ '+esc(e.message)+'<br><span class="muted">به‌جایش خام ثبت شد.</span>';
-    const f=parseLocal(text); if(f.length){apply(f);$('txt').value='';save();setTimeout(render,1400)} else $('go').disabled=false }
+  if(!text||!text.trim())return;
+  const o=document.getElementById('out'); if(!o)return;
+  o.innerHTML='<span class="spin"></span> '+esc(text.slice(0,60));
+  let acts=[];
+  try{ acts = S.settings.apiKey ? await parseAI(text) : parseLocal(text) }
+  catch(e){ acts = parseLocal(text) }              // سرویس نشد؟ خودمان می‌فهمیم
+  if(!acts.length){
+    o.innerHTML='<span class="warnbox" style="display:block">نفهمیدم کدام تخت. یک بار بگو «تخت ۱۲…» تا یادم بماند.</span>';
+    return}
+  UNDO=JSON.stringify({beds:S.beds,log:S.log});
+  const done=apply(acts);
+  save(); render();
+  const o2=document.getElementById('out');
+  if(o2)o2.innerHTML=done.map(d=>`<span class="pill ${d.c||''}" style="display:inline-block;margin:0 0 4px 4px">${esc(d.t)}</span>`).join('')
+    +' <button class="lnk" onclick="undo()">برگردان</button>';
 }
+function undo(){ if(!UNDO)return; const u=JSON.parse(UNDO);
+  S.beds=u.beds;S.log=u.log;UNDO=null;save();render();toast('برگردانده شد') }
+
+/* آخرین تختی که درباره‌اش حرف زدیم — تا لازم نباشد هر بار بگویی */
+let LASTBED=null;
+
+const W2N={'یک':1,'دو':2,'سه':3,'چهار':4,'پنج':5,'شش':6,'شیش':6,'هفت':7,'هشت':8,'نه':9,'ده':10,
+ 'یازده':11,'دوازده':12,'سیزده':13,'چهارده':14,'پانزده':15,'پونزده':15,'شانزده':16,'شونزده':16,
+ 'هفده':17,'هیفده':17,'هجده':18,'هیجده':18,'نوزده':19,'بیست':20,'سی':30,'چهل':40,'پنجاه':50};
+function num(w){w=fixNum(w).trim();if(/^\d+(\.\d+)?$/.test(w))return +w;
+  if(W2N[w]!=null)return W2N[w];
+  const m=w.match(/^(بیست|سی|چهل|پنجاه)\s*و\s*(\S+)$/); // «بیست و یک»
+  if(m&&W2N[m[1]]!=null&&W2N[m[2]]!=null)return W2N[m[1]]+W2N[m[2]];
+  return null}
+const NUMPAT='\\d+|'+Object.keys(W2N).join('|');
 
 /* پارسر آفلاین — وقتی کلید نیست یا سرویس جواب نداد */
 function parseLocal(text){
-  const t=fixNum(text);
-  const m=t.match(/تخت\s*([0-9]+)/); if(!m)return [];
-  const rest=t.slice(m.index+m[0].length).replace(/^[\s,،.:؛-]+/,'').trim();
-  if(!rest)return [];
-  if(/ترخیص/.test(rest))return [{bed:m[1],kind:'discharge'}];
-  if(/انجام شد|انجام دادم|شد$|زدیم|گرفتیم/.test(rest))return [{bed:m[1],kind:'done',text:rest}];
-  if(/بفرست|بگیر|درخواست|اوردر|چک کن/.test(rest))return [{bed:m[1],kind:'task',text:rest}];
-  if(/جواب|آمد|اومد|نتیجه/.test(rest))return [{bed:m[1],kind:'result',text:rest}];
-  return [{bed:m[1],kind:'note',text:rest}];
+  let t=fixNum(text).replace(/\s+/g,' ').trim();
+  if(!t)return [];
+
+  /* تخت را پیدا کن: «تخت ۱۲»، «اتاق ۵»، عددِ اول جمله، یا حرف عددی */
+  let bed=null;
+  let m=t.match(new RegExp('(?:تخت|اتاق|بد|بیمار)\\s*(' + NUMPAT + ')'));
+  if(m){bed=num(m[1]);t=(t.slice(0,m.index)+' '+t.slice(m.index+m[0].length)).trim()}
+  else{ m=t.match(/^(\d{1,3})(?=\s|$)/);   /* فقط رقم، تا «سی‌بی‌سی» تخت ۳۰ خوانده نشود */
+        if(m){bed=+m[1];t=t.slice(m[0].length).trim()} }
+  if(bed==null)bed=LASTBED;                 // ← دنباله‌ی حرف قبلی
+  if(bed==null)return [];
+  bed=String(bed); LASTBED=bed;
+
+  t=t.replace(/^[\s,،.:؛؟-]+/,'').trim();
+  const acts=[], info={};
+
+  /* مشخصات بیمار — از هر جای جمله برداشته می‌شود */
+  let mm;
+  if(mm=t.match(/(?:اسمش|نامش|اسم|نام)\s*:?\s*([^،,.؛]{2,40})/)){
+    info.name=mm[1].trim().replace(/\s*(است|هست|اه|ه)$/,''); t=t.replace(mm[0],' ')}
+  const END='(?=$|[\\s،,.؛])';
+  if(mm=t.match(new RegExp('(' + NUMPAT + ')\\s*(?:ماهه|ماه)' + END)))
+    {const v=num(mm[1]);if(v!=null){info.ageM=v;t=t.replace(mm[0],' ')}}
+  else if(mm=t.match(new RegExp('(' + NUMPAT + ')\\s*(?:ساله|سال)' + END)))
+    {const v=num(mm[1]);if(v!=null){info.ageM=v*12;t=t.replace(mm[0],' ')}}
+  if(mm=t.match(new RegExp('(\\d+(?:[./]\\d+)?|' + NUMPAT + ')\\s*(?:کیلوگرم|کیلو|kg)' + END,'i'))){
+    const v=num(mm[1].replace('/','.')); if(v!=null){info.wt=v;t=t.replace(mm[0],' ')}}
+  if(/پسر/.test(t)){info.sex='m';t=t.replace(/پسر/,' ')}
+  else if(/دختر/.test(t)){info.sex='f';t=t.replace(/دختر/,' ')}
+  if(mm=t.match(/(?:با )?تشخیص\s*:?\s*([^،,.؛]{2,60})/)){info.dx=mm[1].trim();t=t.replace(mm[0],' ')}
+  if(Object.keys(info).length)acts.push({bed,kind:'info',...info});
+
+  /* بقیه‌ی جمله را به بندهای معنادار بشکن */
+  const rest=t.replace(/\s+/g,' ').replace(/^[\s,،.:؛-]+|[\s,،.:؛-]+$/g,'');
+  if(!rest)return acts;
+  for(let c of rest.split(/[،,.؛]+|\bبعدش\b|\bو بعد\b/)){
+    c=c.trim().replace(/^(?:و|که|هم)\s+/,'').trim();
+    if(c.length<2)continue;
+    if(/ترخیص/.test(c)){acts.push({bed,kind:'discharge'});continue}
+    if(/تشخیص افتراقی|ددx|ddx/i.test(c)){acts.push({bed,kind:'ddx'});continue}
+    if(/انجام شد|انجام دادم|زدیم|زدم|گرفتیم|گرفتم|تمام شد|تموم شد|رفت|شد انجام/.test(c))
+      {acts.push({bed,kind:'done',text:c});continue}
+    if(/بفرست|بگیر|درخواست|اوردر|چک کن|بخواه|مشاوره|کنسولت|بده|شروع کن|قطع کن|یادم/.test(c))
+      {acts.push({bed,kind:'task',text:c});continue}
+    if(/جواب|آمد|اومد|نتیجه|گزارش|شد گزارش|ریپورت/.test(c))
+      {acts.push({bed,kind:'result',text:c});continue}
+    acts.push({bed,kind:'note',text:c});
+  }
+  return acts;
 }
 
+/* نام‌های ثبت‌شده را پیش از هر تماس با سرویس از متن بردار */
+function deName(t){
+  for(const b of S.beds) if(b.name&&b.name.length>2)
+    t=t.split(b.name).join('بیمار');
+  return t;
+}
 async function parseAI(text){
   const beds=S.beds.map(b=>b.bed).join('، ')||'—';
   const t=await ai([{role:'system',content:
@@ -237,33 +315,43 @@ kind یکی از این‌هاست:
 - "discharge" ترخیص.
 - "ddx"    وقتی صریحاً تشخیص افتراقی خواست.
 تخت‌های موجود: ${beds}. شماره‌ی تخت را با رقم انگلیسی بده. متن را کوتاه و تمیز بنویس، بدون «تخت N».
-اگر شماره‌ی تخت گفته نشد، actions را خالی بگذار.`},
-    {role:'user',content:text}],true);
+اگر شماره‌ی تخت گفته نشد و تخت قبلی هم نداریم، actions را خالی بگذار.`},
+    {role:'user',content:deName(text)}],true);
   const d=parseJSON(t);
-  return (d.actions||[]).filter(a=>a&&a.bed!=null).map(a=>({...a,bed:fixNum(a.bed)}));
+  let out=(d.actions||[]).filter(a=>a&&a.bed!=null).map(a=>({...a,bed:fixNum(a.bed)}));
+  if(out.length)LASTBED=out[out.length-1].bed;
+  /* نام را خودمان محلی برمی‌داریم — به سرویس نرفته */
+  const lc=parseLocal(text).filter(a=>a.kind==='info'&&a.name);
+  if(lc.length)out=[...lc.map(a=>({bed:out[0]?.bed||a.bed,kind:'info',name:a.name})),...out];
+  return out;
 }
 
 function apply(acts){
+  const sum=[];
   for(const a of acts){
     const b=bedOf(a.bed,true); if(!b)continue;
     const txt=(a.text||'').trim();
     if(a.kind==='info'){
       if(a.ageM!=null)b.ageM=+a.ageM; if(a.wt!=null)b.wt=+a.wt;
-      if(a.sex)b.sex=a.sex; if(a.dx)b.dx=a.dx;
-      logit('تخت '+b.bed,'مشخصات ثبت شد'+(a.dx?' — '+a.dx:''),''); continue}
-    if(a.kind==='discharge'){b.out=true;logit('تخت '+b.bed,'ترخیص شد','gray');continue}
-    if(a.kind==='ddx'){logit('تخت '+b.bed,'درخواست تشخیص افتراقی','');setTimeout(()=>makeDDx(b.id),350);continue}
+      if(a.sex)b.sex=a.sex; if(a.dx)b.dx=a.dx; if(a.name)b.name=a.name;
+      const d=[a.name&&('نام: '+a.name),a.dx,a.ageM!=null&&ageText(b),a.wt!=null&&(a.wt+' kg'),
+               a.sex&&(a.sex==='f'?'دختر':'پسر')].filter(Boolean).join(' · ');
+      logit('تخت '+b.bed,d||'مشخصات ثبت شد','');sum.push({t:'مشخصات تخت '+b.bed});continue}
+    if(a.kind==='discharge'){b.out=true;logit('تخت '+b.bed,'ترخیص شد','gray');sum.push({t:'ترخیص '+b.bed,c:'gray'});continue}
+    if(a.kind==='ddx'){logit('تخت '+b.bed,'درخواست تشخیص افتراقی','');sum.push({t:'DDx'});setTimeout(()=>makeDDx(b.id),350);continue}
     if(a.kind==='done'){
       const open=openTasks(b);
       const hit=open.find(i=>near(i.text,txt))||open[0];
-      if(hit){hit.done=true;hit.doneAt=now();logit('تخت '+b.bed,'✔ '+hit.text,'green')}
-      else{b.items.push({id:uid(),kind:'note',text:txt,date:now()});logit('تخت '+b.bed,txt,'gray')}
+      if(hit){hit.done=true;hit.doneAt=now();logit('تخت '+b.bed,'✔ '+hit.text,'green');sum.push({t:'✔ '+hit.text,c:'green'})}
+      else{b.items.push({id:uid(),kind:'note',text:txt,date:now()});logit('تخت '+b.bed,txt,'gray');sum.push({t:txt,c:'gray'})}
       continue}
     const kind=['task','result','note'].includes(a.kind)?a.kind:'note';
     if(!txt)continue;
     b.items.push({id:uid(),kind,text:txt,done:false,date:now()});
     logit('تخت '+b.bed,txt,KINDS[kind][1]);
+    sum.push({t:KINDS[kind][0]+': '+txt,c:KINDS[kind][1]});
   }
+  return sum;
 }
 /* تطبیق تقریبی متن «انجام شد» با کار باز */
 function near(a,b){
@@ -277,10 +365,11 @@ function tblView(){
   const act=S.beds.filter(b=>!b.out);
   if(!act.length)return '<div class="empty">هنوز تختی ثبت نشده.<br>برو به دستیار و بگو «تخت ۱۲…».</div>';
   return `<div class="tw"><table><thead><tr>
-      <th>تخت</th><th>بیمار</th><th>کارهای مانده</th><th>آخرین جواب</th><th>آخرین نکته</th></tr></thead><tbody>
+      <th>تخت</th><th>نام</th><th>بیمار</th><th>کارهای مانده</th><th>آخرین جواب</th><th>آخرین نکته</th></tr></thead><tbody>
     ${act.map(b=>{const r=lastOf(b,'result'),n=lastOf(b,'note'),o=openTasks(b);
       return `<tr onclick="OPEN='${b.id}';render()">
         <td class="b">${esc(b.bed)}</td>
+        <td>${esc(b.name||'—')}</td>
         <td>${esc(b.dx||'—')}<span class="mini">${esc(ageText(b))}${b.wt?' · '+b.wt+'kg':''}</span></td>
         <td>${o.length?o.map(i=>`<div class="todo">${esc(i.text)}</div>`).join(''):'<span class="mini">—</span>'}</td>
         <td>${r?esc(r.text)+`<span class="mini">${esc(r.date)}</span>`:'<span class="mini">—</span>'}</td>
@@ -295,16 +384,17 @@ function tblView(){
 function bedView(b){
   const v=vitalRange(b.ageM??60);
   return `<div class="card">
-    <b style="font-size:16px">${esc(b.dx||'بدون تشخیص')}</b>
+    <div class="row"><b style="font-size:16px" class="grow">${esc(b.name||b.dx||'بدون تشخیص')}</b>
+      <button class="btn sm dim" id="edit">ویرایش</button></div>
+    ${b.name&&b.dx?`<div>${esc(b.dx)}</div>`:''}
     <div class="muted">${esc(ageText(b))||'سن ثبت نشده'}${b.sex?' · '+(b.sex==='f'?'دختر':'پسر'):''}${b.wt?' · '+b.wt+' kg':''}</div>
     ${!b.wt?'<div class="warnbox" style="margin-top:8px">⚠️ وزن ثبت نشده — بگو «تخت '+esc(b.bed)+' یازده کیلو» تا دوز حساب شود.</div>':''}
     <hr><div class="muted">نرمال این سن (PALS) — HR ${v.hr} · RR ${v.rr} · SBP ${v.sbp}</div>
     ${b.wt?`<div class="row" style="margin-top:9px"><input id="dz" type="number" inputmode="decimal" placeholder="دوز mg/kg" class="grow">
       <button class="btn sm" id="dzgo">محاسبه</button></div><div id="dzo" class="muted" style="margin-top:5px"></div>`:''}
   </div>
-  <div class="card"><div class="row"><textarea id="q" class="grow" placeholder="چیزی اضافه کن…"></textarea>
-    <button class="btn sm" id="qgo">ثبت</button></div>
-    <p class="muted" style="margin:6px 0 0">لازم نیست «تخت ${esc(b.bed)}» بگویی — اینجا خودش می‌داند.</p></div>
+  <div class="card"><textarea id="q" placeholder="چیزی اضافه کن و Enter بزن…"></textarea>
+    <p class="muted" style="margin:6px 0 0">اینجا خودش می‌داند تخت ${esc(b.bed)} است.</p></div>
   <div class="card"><h3>کارهای مانده</h3>
     ${openTasks(b).length?openTasks(b).map(i=>`<div class="chk"><input type="checkbox" data-do="${i.id}">
       <span class="grow">${esc(i.text)}</span><button class="x" data-del="${i.id}">×</button></div>`).join('')
@@ -319,22 +409,43 @@ function bedView(b){
 }
 function bindBed(b){
   const $=i=>document.getElementById(i),V=document.getElementById('view');
+  if($('edit'))$('edit').onclick=()=>editBed(b);
   if($('dzgo'))$('dzgo').onclick=()=>{const d=parseFloat($('dz').value);if(!d)return;
     $('dzo').innerHTML=`<b>${(d*b.wt).toFixed(1)} mg</b> در هر دوز · ÷۲: ${(d*b.wt/2).toFixed(1)} · ÷۳: ${(d*b.wt/3).toFixed(1)} · ÷۴: ${(d*b.wt/4).toFixed(1)} mg`};
-  $('qgo').onclick=async()=>{const t=$('q').value.trim();if(!t)return;
-    $('qgo').disabled=true;
-    try{const acts=S.settings.apiKey?await parseAI('تخت '+b.bed+' '+t):parseLocal('تخت '+b.bed+' '+t);
-      apply(acts.length?acts:[{bed:b.bed,kind:'note',text:t}])}
-    catch(e){apply([{bed:b.bed,kind:'note',text:t}])}
-    save();render()};
+  $('q').onkeydown=async e=>{ if(e.key!=='Enter'||e.shiftKey)return; e.preventDefault();
+    const t=$('q').value.trim(); if(!t)return; $('q').value=''; LASTBED=b.bed;
+    let acts=[]; try{acts=S.settings.apiKey?await parseAI('تخت '+b.bed+' '+t):parseLocal('تخت '+b.bed+' '+t)}
+    catch(x){acts=parseLocal('تخت '+b.bed+' '+t)}
+    apply(acts.length?acts:[{bed:b.bed,kind:'note',text:t}]); save(); render()};
   V.querySelectorAll('[data-do]').forEach(c=>c.onchange=()=>{
     const i=b.items.find(x=>x.id===c.dataset.do); i.done=true;i.doneAt=now();
     logit('تخت '+b.bed,'✔ '+i.text,'green');save();render()});
   V.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{
     b.items=b.items.filter(i=>i.id!==x.dataset.del);save();render()});
 }
+function editBed(b){
+  sheet(`<h3>مشخصات تخت ${esc(b.bed)}</h3>
+  <div class="row"><div class="grow"><label>تخت</label><input id="e_bed" value="${esc(b.bed)}"></div>
+    <div class="grow" style="flex:2"><label>نام (روی همین گوشی می‌ماند و به AI نمی‌رود)</label><input id="e_name" value="${esc(b.name||'')}"></div></div>
+  <div class="row"><div class="grow"><label>سن (ماه)</label><input id="e_age" type="number" inputmode="numeric" value="${b.ageM??''}"></div>
+    <div class="grow"><label>وزن (kg)</label><input id="e_wt" type="number" inputmode="decimal" step="0.1" value="${b.wt??''}"></div>
+    <div class="grow"><label>جنس</label><select id="e_sex"><option value="">—</option>
+      <option value="m" ${b.sex==='m'?'selected':''}>پسر</option><option value="f" ${b.sex==='f'?'selected':''}>دختر</option></select></div></div>
+  <label>تشخیص</label><input id="e_dx" value="${esc(b.dx||'')}">
+  <div class="row" style="margin-top:14px"><button class="btn grow" id="e_ok">ذخیره</button>
+    <button class="btn dim" onclick="closeSheet()">انصراف</button></div>`);
+  document.getElementById('e_ok').onclick=()=>{
+    const g=i=>document.getElementById('e_'+i).value.trim();
+    const nb=fixNum(g('bed'))||b.bed;
+    if(nb!==b.bed&&S.beds.some(x=>x.bed===nb&&x.id!==b.id))return alert('تخت '+nb+' از قبل هست.');
+    b.bed=nb; b.name=g('name'); b.dx=g('dx'); b.sex=g('sex')||undefined;
+    b.ageM=g('age')===''?null:+g('age'); b.wt=g('wt')===''?null:+g('wt');
+    S.beds.sort((a,c)=>(parseInt(a.bed)||999)-(parseInt(c.bed)||999));
+    save();closeSheet();render()};
+}
 function bedMenu(b){
   sheet(`<h3>تخت ${esc(b.bed)}</h3>
+  <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();editBed(S.beds.find(x=>x.id==='${b.id}'))">✏️ ویرایش مشخصات</button>
   <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="copyReport('${b.id}')">📋 کپی گزارش برای HIS</button>
   <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();makeDDx('${b.id}')">🧠 تشخیص افتراقی</button>
   <button class="btn ghost" style="width:100%;margin-bottom:8px" onclick="closeSheet();makePPT('case','${b.id}')">📊 پاورپوینت معرفی کیس</button>
@@ -533,7 +644,7 @@ function buildPPT(d){
 
 function copyReport(id){
   const b=S.beds.find(x=>x.id===id);
-  let t=`تخت ${b.bed}\n${[ageText(b),b.sex?(b.sex==='f'?'دختر':'پسر'):'',b.wt?b.wt+' kg':''].filter(Boolean).join('، ')}\nتشخیص: ${b.dx||'—'}\n\n`;
+  let t=`تخت ${b.bed}${b.name?' — '+b.name:''}\n${[ageText(b),b.sex?(b.sex==='f'?'دختر':'پسر'):'',b.wt?b.wt+' kg':''].filter(Boolean).join('، ')}\nتشخیص: ${b.dx||'—'}\n\n`;
   const g=(k,l)=>{const a=(b.items||[]).filter(i=>i.kind===k);
     if(a.length)t+=l+':\n'+a.map(i=>`- ${i.text}${i.kind==='task'?(i.done?' (انجام شد)':' (مانده)'):''} [${i.date}]`).join('\n')+'\n\n'};
   g('note','سیر بیمار');g('result','جواب‌ها و یافته‌ها');g('task','اقدامات');
