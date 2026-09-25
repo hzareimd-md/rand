@@ -174,7 +174,7 @@ function askView(){
     <p class="hint" id="hint">بزن و حرف بزن — یا پایین تایپ کن</p>
     <div class="row"><textarea id="txt" class="grow" placeholder="مثلاً: تخت ۱۲ سی‌بی‌سی و سی‌آرپی فرستادیم، تبش ۳۹ بود"></textarea></div>
     <button class="btn" id="go" style="width:100%;margin-top:9px">ثبت کن</button>
-    <p class="muted" style="margin:7px 0 0;font-size:12px">اگر میکروفون بالا کار نکرد، روی کادر بزن و 🎤 کیبورد آیفون را بگیر — همان کار را می‌کند.</p>
+    <p class="muted" style="margin:7px 0 0;font-size:12px">آیفون دیکته‌ی درون‌برنامه‌ای نمی‌دهد؛ 🎤 کیبورد خودش همان کار را می‌کند و فارسی را بهتر می‌گیرد.</p>
     <div id="out" class="muted" style="margin-top:9px"></div></div>
   <div class="card"><h3>چی می‌توانی بگویی</h3><div class="ex">
     «تخت ۱۲، پسر ۲۰ ماهه، ۱۱ کیلو، تشنج تب‌دار»<br>
@@ -190,6 +190,7 @@ function askView(){
 }
 function bindAsk(){
   const $=i=>document.getElementById(i);
+  if(isIOS&&standalone)$('hint').innerHTML='بزن، بعد <b>🎤 کیبورد</b> را بگیر و حرف بزن';
   $('mic').onclick=()=>listen($('mic'),$('hint'),t=>{$('txt').value=(($('txt').value+' '+t).trim());$('go').click()});
   $('go').onclick=()=>submit($('txt').value.trim());
 }
@@ -538,12 +539,15 @@ const standalone=window.navigator.standalone===true||
 
 function useKeyboard(hint,why){
   const t=document.getElementById('txt');
-  hint.innerHTML=esc(why)+'<br><b>روی کادر پایین بزن و 🎤 کیبورد آیفون را بگیر.</b>';
+  hint.innerHTML=(why?esc(why)+'<br>':'')+'<b>🎤 کیبورد را بگیر و حرف بزن</b>';
   if(t){t.focus();t.scrollIntoView({block:'center',behavior:'smooth'})}
 }
 
 async function listen(btn,hint,cb){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  /* iOS در حالت نصب‌شده دیکته‌ی وب را رد می‌کند (service-not-allowed).
+     پس وقت کاربر را تلف نکن و مستقیم به دیکته‌ی کیبورد ببر. */
+  if(isIOS&&standalone)return useKeyboard(hint,'');
   if(!SR)return useKeyboard(hint,'این مرورگر دیکته‌ی خودکار ندارد.');
   if(REC){REC.stop();REC=null;return}
 
@@ -569,7 +573,8 @@ async function listen(btn,hint,cb){
       useKeyboard(hint,'iOS اجازه‌ی دیکته‌ی درون‌برنامه‌ای را نداد.');
     else if(e.error==='no-speech')hint.textContent='چیزی نشنیدم، دوباره بزن';
     else if(e.error==='network')useKeyboard(hint,'دیکته‌ی آنلاین در دسترس نیست.');
-    else hint.textContent='صدا گرفته نشد ('+e.error+')'};
+    else hint.textContent='صدا گرفته نشد ('+e.error+')';
+    btn.classList.remove('rec')};
   r.onend=()=>{btn.classList.remove('rec');REC=null;
     if(fin.trim()){hint.textContent='بزن و حرف بزن — یا پایین تایپ کن';cb(fin.trim())}
     else if(!failed)hint.textContent='چیزی نشنیدم، دوباره بزن'};
@@ -585,7 +590,20 @@ function toast(t){const e=document.createElement('div');
   e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
 
 render();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    reg.update();
+    setInterval(()=>reg.update(),60*60*1000);
+    reg.addEventListener('updatefound',()=>{
+      const w=reg.installing; if(!w)return;
+      w.addEventListener('statechange',()=>{
+        if(w.state==='installed'&&navigator.serviceWorker.controller)toast('نسخه‌ی نو آمد — باز و بسته کن')});
+    });
+  }).catch(()=>{});
+  let reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(reloaded)return; reloaded=true; location.reload()});
+}
 </script>
 </body>
 </html>
