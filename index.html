@@ -107,7 +107,8 @@ hr{border:0;border-top:1px solid var(--line);margin:13px 0}
 <script>
 /* ═══ داده — فقط روی همین دستگاه ═══ */
 const KEY='rand_v3';
-const DEF={beds:[],log:[],procs:[],settings:{baseUrl:'https://api.gapgpt.app/v1',model:'gemini-2.5-flash-lite',apiKey:''}};
+const DEF={beds:[],log:[],procs:[],settings:{baseUrl:'https://api.gapgpt.app/v1',
+  model:'gemini-2.5-flash-lite',apiKey:'',sttModel:'whisper-1'}};
 let S=load();
 function load(){try{return Object.assign({},structuredClone(DEF),JSON.parse(localStorage.getItem(KEY)||'{}'))}
   catch(e){return structuredClone(DEF)}}
@@ -385,9 +386,12 @@ function setView(){const s=S.settings;
     <p class="muted" style="margin-top:0">بدون کلید هم کار می‌کند، ولی جمله‌ها را ساده‌تر می‌فهمد و DDx و پاورپوینت ندارد.</p>
     <label>آدرس سرویس</label><input id="u" value="${esc(s.baseUrl)}">
     <label>مدل</label><input id="m" value="${esc(s.model)}">
+    <label>مدل تبدیل صدا به متن</label><input id="sm" value="${esc(s.sttModel||'')}" placeholder="whisper-1 — خالی = خاموش">
+    <p class="muted" style="margin:4px 0 0;font-size:12px">اگر پر باشد، دکمه‌ی میکروفون خودش ضبط می‌کند و می‌فرستد — روی آیفون هم کار می‌کند.</p>
     <label>کلید API (فقط روی همین گوشی)</label><input id="k" type="password" value="${esc(s.apiKey)}" placeholder="sk-…">
     <div class="row" style="margin-top:12px"><button class="btn grow" id="sv">ذخیره</button>
-      <button class="btn ghost" id="ts">تست</button></div>
+      <button class="btn ghost" id="ts">تست متن</button>
+      <button class="btn ghost" id="ta">تست صدا</button></div>
     <div id="so" class="muted" style="margin-top:8px"></div></div>
   <div class="card"><h3>حریم بیمار</h3><p class="muted" style="margin:0">
     همه‌ی داده‌ها فقط روی همین دستگاه است. متن جمله‌هایت برای فهمیده‌شدن به سرویس بالا می‌رود —
@@ -400,10 +404,18 @@ function setView(){const s=S.settings;
 }
 function bindSet(){const $=i=>document.getElementById(i);
   $('sv').onclick=()=>{Object.assign(S.settings,{baseUrl:$('u').value.trim().replace(/\/$/,''),
-    model:$('m').value.trim(),apiKey:$('k').value.trim()});save();toast('ذخیره شد')};
+    model:$('m').value.trim(),sttModel:$('sm').value.trim(),apiKey:$('k').value.trim()});save();toast('ذخیره شد')};
   $('ts').onclick=async()=>{$('so').innerHTML='<span class="spin"></span> تست…';
     try{const r=await ai([{role:'user',content:'فقط بنویس: سلام'}]);$('so').textContent='✅ وصل شد — '+r.slice(0,50)}
     catch(e){$('so').innerHTML='❌ '+esc(e.message)}};
+  $('ta').onclick=async()=>{
+    if(!S.settings.sttModel)return $('so').textContent='اول اسم مدل صدا را بنویس (مثلاً whisper-1) و ذخیره کن.';
+    $('so').innerHTML='<span class="spin"></span> ضبط ۳ ثانیه‌ای…';
+    try{ const b=await recordFor(3000);
+         $('so').innerHTML='<span class="spin"></span> در حال تبدیل…';
+         const t=await transcribe(b);
+         $('so').textContent='✅ شنید: '+(t||'(چیزی نشنید)')}
+    catch(e){$('so').textContent='❌ '+e.message}};
   $('ex').onclick=()=>dl(new Blob([JSON.stringify(S)],{type:'application/json'}),'rand-backup.json');
   $('im').onclick=()=>$('imf').click();
   $('imf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
@@ -528,6 +540,49 @@ function copyReport(id){
   navigator.clipboard.writeText(t).then(()=>{closeSheet();toast('گزارش کپی شد')},()=>alert(t));
 }
 
+/* ═══ ضبط صدا و تبدیل به متن روی سرویس ═══ */
+/* این راه محدودیت iOS را دور می‌زند: ضبط اجازه دارد، فقط دیکته‌ی درون‌مرورگر ممنوع است. */
+let MR=null;
+function pickMime(){
+  for(const m of ['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'])
+    if(window.MediaRecorder?.isTypeSupported?.(m))return m;
+  return '';
+}
+async function startRec(){
+  const st=await navigator.mediaDevices.getUserMedia({audio:true});
+  const mt=pickMime();
+  const mr=new MediaRecorder(st,mt?{mimeType:mt}:undefined);
+  const chunks=[];
+  mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  const stopped=new Promise(res=>mr.onstop=()=>{
+    st.getTracks().forEach(t=>t.stop());
+    res(new Blob(chunks,{type:mt||'audio/mp4'}))});
+  mr.start(); MR=mr;
+  return {stop:()=>{if(mr.state!=='inactive')mr.stop();MR=null;return stopped}};
+}
+async function recordFor(ms){const r=await startRec();await new Promise(x=>setTimeout(x,ms));return r.stop()}
+
+async function transcribe(blob){
+  const s=S.settings;
+  if(!s.apiKey)throw new Error('اول کلید API را وارد کن.');
+  if(blob.size<1200)throw new Error('چیزی ضبط نشد.');
+  const ext=(blob.type.includes('mp4')?'m4a':blob.type.includes('ogg')?'ogg':'webm');
+  const fd=new FormData();
+  fd.append('file',new File([blob],'a.'+ext,{type:blob.type}));
+  fd.append('model',s.sttModel);
+  fd.append('language','fa');
+  const r=await fetch(s.baseUrl+'/audio/transcriptions',{method:'POST',
+    headers:{'Authorization':'Bearer '+s.apiKey},body:fd});
+  if(!r.ok){
+    let why='';try{const j=await r.json();why=j?.error?.message||''}catch(e){}
+    if(r.status===404)throw new Error('این سرویس مدل «'+s.sttModel+'» را ندارد. '+why);
+    if(r.status===401)throw new Error('کلید قبول نشد (۴۰۱). '+why);
+    throw new Error('تبدیل صدا نشد ('+r.status+')'+(why?' — '+why:''));
+  }
+  const d=await r.json().catch(()=>null);
+  return (d?.text||'').trim();
+}
+
 /* ═══ صدا ═══ */
 /* روی آیفون، دیکته‌ی وب در حالت نصب‌شده اغلب اجازه نمی‌گیرد.
    پس اول صریح اجازه می‌گیریم، و اگر نشد به دیکته‌ی کیبورد خود iOS پاس می‌دهیم. */
@@ -544,6 +599,8 @@ function useKeyboard(hint,why){
 }
 
 async function listen(btn,hint,cb){
+  /* راه اول: ضبط و فرستادن به سرویس — همه‌جا کار می‌کند، آیفون هم */
+  if(S.settings.sttModel&&S.settings.apiKey&&window.MediaRecorder)return recFlow(btn,hint,cb);
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   /* iOS در حالت نصب‌شده دیکته‌ی وب را رد می‌کند (service-not-allowed).
      پس وقت کاربر را تلف نکن و مستقیم به دیکته‌ی کیبورد ببر. */
@@ -579,6 +636,20 @@ async function listen(btn,hint,cb){
     if(fin.trim()){hint.textContent='بزن و حرف بزن — یا پایین تایپ کن';cb(fin.trim())}
     else if(!failed)hint.textContent='چیزی نشنیدم، دوباره بزن'};
   try{r.start()}catch(e){useKeyboard(hint,'دیکته شروع نشد.')}
+}
+
+let RECH=null;
+async function recFlow(btn,hint,cb){
+  if(RECH){ // تپ دوم = پایان ضبط
+    const h=RECH;RECH=null;btn.classList.remove('rec');hint.innerHTML='<span class="spin"></span> در حال نوشتن…';
+    try{const t=await transcribe(await h.stop());
+      hint.textContent='بزن و حرف بزن — یا پایین تایپ کن';
+      if(t)cb(t); else hint.textContent='چیزی نشنیدم، دوباره بزن'}
+    catch(e){useKeyboard(hint,e.message)}
+    return}
+  try{ RECH=await startRec(); btn.classList.add('rec');
+       hint.innerHTML='<b>در حال ضبط…</b> وقتی تمام شد دوباره بزن' }
+  catch(e){ RECH=null; useKeyboard(hint,'میکروفون اجازه نداد.') }
 }
 
 /* ═══ UI ═══ */
