@@ -87,6 +87,15 @@ h3{font-size:14.5px;margin:0 0 9px}
 hr{border:0;border-top:1px solid var(--line);margin:13px 0}
 .cur{background:var(--soft);color:var(--brand);border-radius:10px;padding:7px 11px;font-size:13px;margin-bottom:4px}
 .lnk{background:0;border:0;color:var(--brand);font:inherit;font-size:12.5px;text-decoration:underline;padding:0 6px}
+.clean{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 11px;
+ font-size:12.5px;margin-bottom:7px;text-align:right;line-height:1.9}
+.chat{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:7px}
+.msg{padding:9px 12px;border-radius:13px;font-size:14px;max-width:88%;white-space:pre-wrap;line-height:1.8}
+.msg.user{background:var(--brand);color:#fff;align-self:flex-start;border-end-start-radius:4px}
+.msg.assistant{background:var(--bg);border:1px solid var(--line);align-self:flex-end;border-end-end-radius:4px}
+.mic2{background:var(--soft);color:var(--brand);border:0;border-radius:10px;width:44px;height:44px;flex:none;font-size:19px}
+.mic2.rec{background:var(--danger);color:#fff}
+td.hot{color:var(--danger);font-weight:800}
 .ddx{border-inline-start:3px solid var(--line);padding-inline-start:10px;margin-bottom:11px}
 .ddx.cm{border-color:var(--danger)}.ddx.lk{border-color:var(--ok)}.ddx.nx{border-color:var(--brand)}
 .stat{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:11px}
@@ -122,7 +131,9 @@ const today=()=>new Date().toLocaleDateString('fa-IR');
 
 /* ارقام فارسی/عربی → انگلیسی، تا «تخت ۱۲» و «تخت 12» یکی شوند */
 const fixNum=s=>String(s??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-                             .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+                             .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+                             .replace(/[٫،]\s*(?=\d)/g,'.')   /* ممیز فارسی بین دو رقم */
+                             .replace(/[٬,](?=\d{3}\b)/g,'');
 function bedOf(n,make){
   n=fixNum(n).trim(); if(!n)return null;
   let b=S.beds.find(x=>x.bed===n);
@@ -140,7 +151,9 @@ function vitalRange(m){for(const[l,v]of[[1,{hr:'100-205',rr:'30-60',sbp:'>60'}],
   [144,{hr:'75-118',rr:'18-25',sbp:'>82'}],[999,{hr:'60-100',rr:'12-20',sbp:'>90'}]])if(m<l)return v}
 
 /* items: {id,kind,text,done,date}  kind = task | result | note | dx */
-const KINDS={task:['کار','amber'],result:['جواب','green'],note:['یادداشت','gray'],dx:['تشخیص','']};
+const KINDS={task:['کار','amber'],result:['جواب','green'],note:['یادداشت','gray'],dx:['تشخیص',''],
+  vital:['علائم حیاتی','red'],lab:['آزمایش','green'],para:['پاراکلینیک','blue'],
+  proc:['پروسیجر',''],exam:['معاینه','gray']};
 const openTasks=b=>(b.items||[]).filter(i=>i.kind==='task'&&!i.done);
 const lastOf=(b,k)=>(b.items||[]).filter(i=>i.kind===k).slice(-1)[0];
 
@@ -208,23 +221,30 @@ function bindAsk(){
 function logit(t,x,c){S.log.unshift({t,x,c,at:now()}); S.log=S.log.slice(0,300)}
 
 /* ═══ فهم جمله ═══ */
-let UNDO=null;
+let UNDO=null, LASTCLEAN='', BYAI=false;
 async function submit(text){
   if(!text||!text.trim())return;
   const o=document.getElementById('out'); if(!o)return;
   o.innerHTML='<span class="spin"></span> '+esc(text.slice(0,60));
-  let acts=[];
-  try{ acts = S.settings.apiKey ? await parseAI(text) : parseLocal(text) }
-  catch(e){ acts = parseLocal(text) }              // سرویس نشد؟ خودمان می‌فهمیم
+  let acts=[], err=''; LASTCLEAN=''; BYAI=false;
+  if(S.settings.apiKey){
+    try{ acts = await parseAI(text); BYAI=true }
+    catch(e){ err=e.message; acts = parseLocal(text) }   // سرویس نشد؟ خودمان می‌فهمیم
+  } else acts = parseLocal(text);
   if(!acts.length){
-    o.innerHTML='<span class="warnbox" style="display:block">نفهمیدم کدام تخت. یک بار بگو «تخت ۱۲…» تا یادم بماند.</span>';
+    o.innerHTML='<div class="warnbox">نفهمیدم کدام تخت. یک بار بگو «تخت ۱۲…» تا یادم بماند.</div>'
+      +(LASTCLEAN?`<div class="clean">خواند: ${esc(LASTCLEAN)}</div>`:'');
     return}
   UNDO=JSON.stringify({beds:S.beds,log:S.log});
   const done=apply(acts);
   save(); render();
   const o2=document.getElementById('out');
-  if(o2)o2.innerHTML=done.map(d=>`<span class="pill ${d.c||''}" style="display:inline-block;margin:0 0 4px 4px">${esc(d.t)}</span>`).join('')
-    +' <button class="lnk" onclick="undo()">برگردان</button>';
+  if(o2)o2.innerHTML=
+    (LASTCLEAN&&LASTCLEAN!==text.trim()
+      ? `<div class="clean">شنید: «${esc(text.slice(0,90))}»<br>خواند: <b>${esc(LASTCLEAN.slice(0,120))}</b></div>`:'')
+    + (err?`<div class="warnbox" style="display:block;margin-bottom:6px">سرویس نشد (${esc(err.slice(0,60))}) — خودم فهمیدم.</div>`:'')
+    + done.map(d=>`<span class="pill ${d.c||''}" style="display:inline-block;margin:0 0 4px 4px">${esc(d.t)}</span>`).join('')
+    + ' <button class="lnk" onclick="undo()">برگردان</button>';
 }
 function undo(){ if(!UNDO)return; const u=JSON.parse(UNDO);
   S.beds=u.beds;S.log=u.log;UNDO=null;save();render();toast('برگردانده شد') }
@@ -242,6 +262,38 @@ function num(w){w=fixNum(w).trim();if(/^\d+(\.\d+)?$/.test(w))return +w;
   return null}
 const NUMPAT='\\d+|'+Object.keys(W2N).join('|');
 
+const PROC=new RegExp(['ال.?پی','\\blp\\b','پانکچر','رگ.?گیری','آنژیوکت','آنژیو','\\biv\\b','آی.?وی',
+ '\\bio\\b','سونداژ','فولی','\\bfoley\\b','ساکشن','ان.?جی','\\bngt?\\b','ng\\s*tube','انتوباس','\\bett\\b',
+ 'لوله.?گذاری','سی.?وی.?سی','\\bcvc\\b','\\bcpr\\b','احیا','بخیه','گچ','آتل','پانسمان','تزریق','نبولایز',
+ 'اسپیرومتر','\\babg\\b','خون.?گیری','\\bbmp\\b'].join('|'),'i');
+const PARA=/سونو|سی\u200cتی|ct|ام\u200cآر\u200cآی|mri|رادیوگراف|گرافی|cxr|اکو|نوار قلب|ecg|eeg|نوار مغز|اسکن|آندوسکوپ/i;
+const LABNAMES=/^(wbc|hb|hgb|hct|plt|esr|crp|na|k|ca|mg|bun|cr|ast|alt|alp|bili|glu|bs|ph|pco2|po2|hco3|inr|ptt|pt|ua|bc|csf|tsh|t4|ck|ldh|alb|amy|lip|procal|pct)$/i;
+
+/* علائم حیاتی را از جمله دربیاور */
+function vitals(c){
+  const t=fixNum(c),o={};let hit=false,m;
+  if(m=t.match(/(?:تب|درجه|حرارت|temp|t)\s*(?:ش|اش)?\s*:?\s*(\d{2}(?:[./]\d)?)/i)){
+    const v=+m[1].replace('/','.'); if(v>=33&&v<=43){o.temp=v;hit=true}}
+  if(m=t.match(/(?:ضربان|پالس|قلب|hr|pr)\s*:?\s*(\d{2,3})/i)){o.hr=+m[1];hit=true}
+  if(m=t.match(/(?:تنفس|rr)\s*:?\s*(\d{1,3})/i)){o.rr=+m[1];hit=true}
+  if(m=t.match(/(?:فشار|bp)\s*:?\s*(\d{2,3})\s*(?:\/|روی|بر)\s*(\d{2,3})/i)){o.bp=m[1]+'/'+m[2];hit=true}
+  if(m=t.match(/(?:ساچ|اشباع|spo2|sat|o2)\s*:?\s*(\d{2,3})/i)){const v=+m[1];if(v<=100){o.spo2=v;hit=true}}
+  return hit?o:null;
+}
+/* «WBC چهارده، CRP ۲۴» → چند آزمایش جدا */
+function labs(c){
+  const t=fixNum(c),out=[],re=/([A-Za-z][A-Za-z0-9]{1,8})\s*:?\s*(\d+(?:[./]\d+)?|[^\s،,]+)/g;
+  let m;
+  while(m=re.exec(t)){
+    const name=m[1];
+    if(!LABNAMES.test(name))continue;
+    const raw=String(m[2]).replace('/','.');
+    const val=/^\d+(\.\d+)?$/.test(raw)?raw:(num(raw)!=null?String(num(raw)):raw);
+    out.push({name:name.toUpperCase(),val,text:name.toUpperCase()+' '+val});
+  }
+  return out;
+}
+
 /* پارسر آفلاین — وقتی کلید نیست یا سرویس جواب نداد */
 function parseLocal(text){
   let t=fixNum(text).replace(/\s+/g,' ').trim();
@@ -251,7 +303,8 @@ function parseLocal(text){
   let bed=null;
   let m=t.match(new RegExp('(?:تخت|اتاق|بد|بیمار)\\s*(' + NUMPAT + ')'));
   if(m){bed=num(m[1]);t=(t.slice(0,m.index)+' '+t.slice(m.index+m[0].length)).trim()}
-  else{ m=t.match(/^(\d{1,3})(?=\s|$)/);   /* فقط رقم، تا «سی‌بی‌سی» تخت ۳۰ خوانده نشود */
+  else{ /* فقط رقم — و نه وقتی واحد دنبالش است («۴۳ کیلوعه» وزن است نه تخت ۴۳) */
+        m=t.match(/^(\d{1,3})(?!\s*(?:کیلو|kg|ماه|سال|درجه|سی\s*سی|cc|ml|میلی))(?=\s|$)/i);
         if(m){bed=+m[1];t=t.slice(m[0].length).trim()} }
   if(bed==null)bed=LASTBED;                 // ← دنباله‌ی حرف قبلی
   if(bed==null)return [];
@@ -264,28 +317,43 @@ function parseLocal(text){
   let mm;
   if(mm=t.match(/(?:اسمش|نامش|اسم|نام)\s*:?\s*([^،,.؛]{2,40})/)){
     info.name=mm[1].trim().replace(/\s*(است|هست|اه|ه)$/,''); t=t.replace(mm[0],' ')}
-  const END='(?=$|[\\s،,.؛])';
-  if(mm=t.match(new RegExp('(' + NUMPAT + ')\\s*(?:ماهه|ماه)' + END)))
-    {const v=num(mm[1]);if(v!=null){info.ageM=v;t=t.replace(mm[0],' ')}}
-  else if(mm=t.match(new RegExp('(' + NUMPAT + ')\\s*(?:ساله|سال)' + END)))
-    {const v=num(mm[1]);if(v!=null){info.ageM=v*12;t=t.replace(mm[0],' ')}}
-  if(mm=t.match(new RegExp('(\\d+(?:[./]\\d+)?|' + NUMPAT + ')\\s*(?:کیلوگرم|کیلو|kg)' + END,'i'))){
-    const v=num(mm[1].replace('/','.')); if(v!=null){info.wt=v;t=t.replace(mm[0],' ')}}
+  const SUF='[\\u200cهئعاِیسشتمنده]*';   /* کیلوعه، کیلوئه، کیلوست، ماهشه… */
+  const DEC='\\d+(?:[./]\\d+)?|' + NUMPAT;
+  if(mm=t.match(new RegExp('(' + DEC + ')\\s*ماه' + SUF)))
+    {const v=num(mm[1]);if(v!=null){info.ageM=Math.round(v);t=t.replace(mm[0],' ')}}
+  else if(mm=t.match(new RegExp('(' + DEC + ')\\s*سال' + SUF)))
+    {const v=num(mm[1]);if(v!=null){info.ageM=Math.round(v*12);t=t.replace(mm[0],' ')}}
+  if(mm=t.match(new RegExp('(' + DEC + ')\\s*(?:کیلوگرم|کیلو|kg)' + SUF,'i'))){
+    const v=num(String(mm[1]).replace('/','.')); if(v!=null){info.wt=v;t=t.replace(mm[0],' ')}}
   if(/پسر/.test(t)){info.sex='m';t=t.replace(/پسر/,' ')}
   else if(/دختر/.test(t)){info.sex='f';t=t.replace(/دختر/,' ')}
   if(mm=t.match(/(?:با )?تشخیص\s*:?\s*([^،,.؛]{2,60})/)){info.dx=mm[1].trim();t=t.replace(mm[0],' ')}
   if(Object.keys(info).length)acts.push({bed,kind:'info',...info});
 
   /* بقیه‌ی جمله را به بندهای معنادار بشکن */
-  const rest=t.replace(/\s+/g,' ').replace(/^[\s,،.:؛-]+|[\s,،.:؛-]+$/g,'');
+  let rest=t.replace(/\s+/g,' ').replace(/^[\s,،.:؛-]+|[\s,،.:؛-]+$/g,'');
   if(!rest)return acts;
-  for(let c of rest.split(/[،,.؛]+|\bبعدش\b|\bو بعد\b/)){
+  const DOT='\u0000';
+  rest=rest.replace(/(\d)\.(\d)/g,'$1'+DOT+'$2');     /* ۱۴.۲ را نشکن */
+  for(let c of rest.split(/[،,.؛]+|بعدش|و بعد/)){
+    c=c.split(DOT).join('.');
     c=c.trim().replace(/^(?:و|که|هم)\s+/,'').trim();
     if(c.length<2)continue;
     if(/ترخیص/.test(c)){acts.push({bed,kind:'discharge'});continue}
     if(/تشخیص افتراقی|ددx|ddx/i.test(c)){acts.push({bed,kind:'ddx'});continue}
-    if(/انجام شد|انجام دادم|زدیم|زدم|گرفتیم|گرفتم|تمام شد|تموم شد|رفت|شد انجام/.test(c))
+    /* علائم حیاتی: تب، ضربان، تنفس، فشار، ساچوریشن */
+    const v=vitals(c);
+    if(v){acts.push({bed,kind:'vital',text:c,...v});continue}
+    /* پروسیجر انجام‌شده */
+    if(PROC.test(c)&&/انجام|زدیم|زدم|زدن|گرفتیم|گرفتم|گرفتن|کردیم|کردم|کردن|شد|شده|گذاشتیم|گذاشتم|وصل|تمام|تموم|رفت/.test(c))
+      {acts.push({bed,kind:'proc',text:c});acts.push({bed,kind:'done',text:c});continue}
+    if(/انجام شد|انجام دادم|انجام دادیم|زدیم|زدم|گرفتیم|گرفتم|کردیم|کردم|تمام شد|تموم شد|رفت|شد انجام|okay|اوکی/.test(c))
       {acts.push({bed,kind:'done',text:c});continue}
+    if(PARA.test(c)){acts.push({bed,kind:'para',text:c});continue}
+    if(/معاینه|سمع|لمس|رفلکس|مننژ|تورگور|فونتانل|تمپان|رال|ویز|کراکل|سیانوز|ادم|ددهیدر/.test(c))
+      {acts.push({bed,kind:'exam',text:c});continue}
+    const lb=labs(c); if(lb.length){for(const l of lb)acts.push({bed,kind:'lab',...l});continue}
+    if(PROC.test(c)){acts.push({bed,kind:'task',text:c});continue}
     if(/بفرست|بگیر|درخواست|اوردر|چک کن|بخواه|مشاوره|کنسولت|بده|شروع کن|قطع کن|یادم/.test(c))
       {acts.push({bed,kind:'task',text:c});continue}
     if(/جواب|آمد|اومد|نتیجه|گزارش|شد گزارش|ریپورت/.test(c))
@@ -305,10 +373,21 @@ async function parseAI(text){
   const beds=S.beds.map(b=>b.bed).join('، ')||'—';
   const t=await ai([{role:'system',content:
 `تو دستیار یک اینترن بخش اطفال هستی. جمله‌ی گفتاری او را به فهرست عمل تبدیل کن. فقط JSON برگردان:
-{"actions":[{"bed":"12","kind":"...","text":"...","ageM":20,"wt":11.5,"sex":"m","dx":"..."}]}
+{"clean":"متن تصحیح‌شده","actions":[{"bed":"12","kind":"...","text":"...","ageM":20,"wt":11.5,"sex":"m","dx":"...",
+"temp":38.5,"hr":120,"rr":30,"bp":"90/60","spo2":97,"name":"WBC","val":"14.2"}]}
+
+متن از دیکته‌ی صوتی می‌آید، پس اول آن را تصحیح کن و در "clean" بگذار:
+اصطلاح پزشکی بدشنیده‌شده را درست کن (سی بی سی→CBC، یو ای→U/A، ال پی→LP، سی آر پی→CRP،
+آی وی→IV، ان جی→NG، سفتریاکسون، آموکسی‌سیلین، دگزامتازون…)، عددِ حرفی را رقم کن،
+و واحد را درست بگذار. بعد از روی متنِ تصحیح‌شده actions را بساز و در text همان را بنویس.
 kind یکی از این‌هاست:
 - "task"   کاری که باید انجام شود (اوردر، آزمایش، درخواست مشاوره). برای هر آزمایش یک action جدا بساز.
-- "result" جواب آزمایش یا یافته‌ای که آمده.
+- "vital"  علائم حیاتی — فیلدهای temp (تب سانتی‌گراد)، hr، rr، bp ("90/60")، spo2 را پر کن.
+- "lab"    جواب آزمایش — name (اسم انگلیسی، مثل WBC) و val. برای هر آزمایش یک action جدا.
+- "para"   پاراکلینیک: سونو، سی‌تی، گرافی، اکو، نوار قلب و مغز.
+- "proc"   پروسیجری که انجام شده: LP، رگ‌گیری، سونداژ، انتوباسیون…
+- "exam"   یافته‌ی معاینه‌ی فیزیکی.
+- "result" هر یافته‌ی دیگری که آمده.
 - "done"   کاری که انجام شده — متنش را بنویس تا کار باز متناظر تیک بخورد.
 - "note"   هر چیز دیگر (سیر بیمار، علامت، تصمیم).
 - "info"   مشخصات بیمار؛ ageM (سن به ماه)، wt (وزن kg)، sex (m/f)، dx (تشخیص) را پر کن.
@@ -318,6 +397,7 @@ kind یکی از این‌هاست:
 اگر شماره‌ی تخت گفته نشد و تخت قبلی هم نداریم، actions را خالی بگذار.`},
     {role:'user',content:deName(text)}],true);
   const d=parseJSON(t);
+  LASTCLEAN=(d.clean||'').trim();
   let out=(d.actions||[]).filter(a=>a&&a.bed!=null).map(a=>({...a,bed:fixNum(a.bed)}));
   if(out.length)LASTBED=out[out.length-1].bed;
   /* نام را خودمان محلی برمی‌داریم — به سرویس نرفته */
@@ -327,7 +407,7 @@ kind یکی از این‌هاست:
 }
 
 function apply(acts){
-  const sum=[];
+  const sum=[], added=new Set();
   for(const a of acts){
     const b=bedOf(a.bed,true); if(!b)continue;
     const txt=(a.text||'').trim();
@@ -343,19 +423,26 @@ function apply(acts){
       const open=openTasks(b);
       const hit=open.find(i=>near(i.text,txt))||open[0];
       if(hit){hit.done=true;hit.doneAt=now();logit('تخت '+b.bed,'✔ '+hit.text,'green');sum.push({t:'✔ '+hit.text,c:'green'})}
-      else{b.items.push({id:uid(),kind:'note',text:txt,date:now()});logit('تخت '+b.bed,txt,'gray');sum.push({t:txt,c:'gray'})}
+      else if(!added.has(b.bed+'|'+txt)){
+        b.items.push({id:uid(),kind:'note',text:txt,date:now()});
+        logit('تخت '+b.bed,txt,'gray');sum.push({t:txt,c:'gray'})}
       continue}
-    const kind=['task','result','note'].includes(a.kind)?a.kind:'note';
-    if(!txt)continue;
-    b.items.push({id:uid(),kind,text:txt,done:false,date:now()});
-    logit('تخت '+b.bed,txt,KINDS[kind][1]);
-    sum.push({t:KINDS[kind][0]+': '+txt,c:KINDS[kind][1]});
+    const kind=KINDS[a.kind]?a.kind:'note';
+    if(!txt&&!a.name)continue;
+    added.add(b.bed+'|'+(txt||a.text||''));
+    b.items.push({id:uid(),kind,text:txt||a.text||'',done:false,date:now(),
+      temp:a.temp,hr:a.hr,rr:a.rr,bp:a.bp,spo2:a.spo2,name:a.name,val:a.val});
+    logit('تخت '+b.bed,txt||a.text||'',KINDS[kind][1]);
+    sum.push({t:KINDS[kind][0]+': '+(txt||a.text||''),c:KINDS[kind][1]});
   }
   return sum;
 }
 /* تطبیق تقریبی متن «انجام شد» با کار باز */
 function near(a,b){
-  const n=s=>fixNum(s).toLowerCase().replace(/[^\wآ-ی ]/g,' ').split(/\s+/).filter(w=>w.length>1);
+  const STOP=new Set(['برای','انجام','دادم','دادیم','شد','شده','بگیر','بفرست','کردم','کردیم','زدم','زدیم',
+    'گرفتم','گرفتیم','تخت','بیمار','هم','را','رو','یه','یک','بده','کن']);
+  const n=s=>fixNum(s).toLowerCase().replace(/[^\wآ-ی\u200c ]/g,' ').replace(/\u200c/g,'')
+    .split(/\s+/).filter(w=>w.length>1&&!STOP.has(w));
   const A=n(a),B=n(b); if(!A.length||!B.length)return false;
   return A.some(w=>B.includes(w));
 }
@@ -381,32 +468,78 @@ function tblView(){
 }
 
 /* ═══ صفحه‌ی تخت ═══ */
+const sec=(t,body)=>body?`<div class="card"><h3>${t}</h3>${body}</div>`:'';
+const of=(b,k)=>(b.items||[]).filter(i=>i.kind===k);
+
 function bedView(b){
   const v=vitalRange(b.ageM??60);
+  const vt=of(b,'vital'), lb=of(b,'lab'), pa=of(b,'para'), pr=of(b,'proc'),
+        ex=of(b,'exam'), nt=[...of(b,'note'),...of(b,'result')], tk=of(b,'task');
+
+  /* علائم حیاتی: یک سطر برای هر بار ثبت */
+  const vitals=vt.length?`<div class="tw"><table><thead><tr><th>زمان</th><th>تب</th><th>HR</th><th>RR</th><th>BP</th><th>SpO₂</th></tr></thead><tbody>
+    ${[...vt].reverse().map(i=>`<tr><td class="mini">${esc(i.date)}</td>
+      <td class="${i.temp>=38?'hot':''}">${i.temp??'—'}</td><td>${i.hr??'—'}</td>
+      <td>${i.rr??'—'}</td><td>${i.bp??'—'}</td><td>${i.spo2??'—'}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="muted" style="margin:7px 0 0">نرمال این سن (PALS): HR ${v.hr} · RR ${v.rr} · SBP ${v.sbp}</p>`:'';
+
+  /* آزمایش‌ها: هر تست یک سطر، آخرین مقدار اول */
+  const byName={}; lb.forEach(i=>{(byName[i.name||i.text]=byName[i.name||i.text]||[]).push(i)});
+  const labs=lb.length?`<div class="tw"><table><thead><tr><th>آزمایش</th><th>آخرین</th><th>زمان</th><th>روند</th></tr></thead><tbody>
+    ${Object.entries(byName).map(([n,a])=>{const last=a[a.length-1];
+      return `<tr><td class="b" style="font-size:13.5px">${esc(n)}</td><td><b>${esc(last.val||last.text)}</b></td>
+      <td class="mini">${esc(last.date)}</td>
+      <td class="mini">${a.length>1?a.map(x=>esc(x.val||'')).join(' ← '):'—'}</td></tr>`}).join('')}
+    </tbody></table></div>`:'';
+
+  const rows=(a,extra)=>`<div class="tw"><table><thead><tr><th>${extra}</th><th>زمان</th></tr></thead><tbody>
+    ${[...a].reverse().map(i=>`<tr><td>${esc(i.text)}</td><td class="mini">${esc(i.date)}</td></tr>`).join('')}
+    </tbody></table></div>`;
+
   return `<div class="card">
     <div class="row"><b style="font-size:16px" class="grow">${esc(b.name||b.dx||'بدون تشخیص')}</b>
       <button class="btn sm dim" id="edit">ویرایش</button></div>
     ${b.name&&b.dx?`<div>${esc(b.dx)}</div>`:''}
     <div class="muted">${esc(ageText(b))||'سن ثبت نشده'}${b.sex?' · '+(b.sex==='f'?'دختر':'پسر'):''}${b.wt?' · '+b.wt+' kg':''}</div>
-    ${!b.wt?'<div class="warnbox" style="margin-top:8px">⚠️ وزن ثبت نشده — بگو «تخت '+esc(b.bed)+' یازده کیلو» تا دوز حساب شود.</div>':''}
-    <hr><div class="muted">نرمال این سن (PALS) — HR ${v.hr} · RR ${v.rr} · SBP ${v.sbp}</div>
+    ${!b.wt?'<div class="warnbox" style="margin-top:8px">⚠️ وزن ثبت نشده — بگو «'+esc(b.bed)+' یازده کیلوست» تا دوز حساب شود.</div>':''}
     ${b.wt?`<div class="row" style="margin-top:9px"><input id="dz" type="number" inputmode="decimal" placeholder="دوز mg/kg" class="grow">
       <button class="btn sm" id="dzgo">محاسبه</button></div><div id="dzo" class="muted" style="margin-top:5px"></div>`:''}
   </div>
+
   <div class="card"><textarea id="q" placeholder="چیزی اضافه کن و Enter بزن…"></textarea>
-    <p class="muted" style="margin:6px 0 0">اینجا خودش می‌داند تخت ${esc(b.bed)} است.</p></div>
-  <div class="card"><h3>کارهای مانده</h3>
-    ${openTasks(b).length?openTasks(b).map(i=>`<div class="chk"><input type="checkbox" data-do="${i.id}">
-      <span class="grow">${esc(i.text)}</span><button class="x" data-del="${i.id}">×</button></div>`).join('')
-     :'<div class="muted">کاری مانده نیست 🎉</div>'}</div>
-  <div class="card"><h3>همه‌چیز</h3>
-    ${(b.items||[]).length?[...b.items].reverse().map(i=>`<div class="log">
-      <span class="pill ${KINDS[i.kind][1]}">${KINDS[i.kind][0]}</span>
-      <div class="grow"><div class="${i.done?'doneline':''}">${esc(i.text)}</div>
-      <small class="muted">${esc(i.date)}${i.done?' · انجام شد '+esc(i.doneAt||''):''}</small></div>
-      <button class="x" data-del="${i.id}">×</button></div>`).join(''):'<div class="muted">خالی است.</div>'}</div>
+    <p class="muted" style="margin:6px 0 0">خودش می‌داند تخت ${esc(b.bed)} است.</p></div>
+
+  <div class="card"><h3>💬 مشورت درباره‌ی همین بیمار</h3>
+    <div id="chat" class="chat">${(b.chat||[]).length?(b.chat||[]).map(m=>
+      `<div class="msg ${m.role}">${esc(m.content)}</div>`).join(''):
+      '<div class="muted" style="text-align:center;padding:12px">بپرس: «چه آزمایشی بگیرم؟» · «دوز سفتریاکسونش چقدر؟» · «چی را از دست داده‌ام؟»</div>'}</div>
+    <div class="row" style="margin-top:9px"><textarea id="ci" class="grow" style="min-height:44px" placeholder="سؤالت را بنویس و Enter بزن…"></textarea>
+      <button class="mic2" id="cmic">🎤</button></div>
+    <p class="muted" style="margin:6px 0 0;font-size:12px">فقط همین بیمار را می‌بیند — بی‌نام، و نام هرگز فرستاده نمی‌شود.</p></div>
+
+  ${sec('کارهای مانده', tk.filter(i=>!i.done).length
+    ? tk.filter(i=>!i.done).map(i=>`<div class="chk"><input type="checkbox" data-do="${i.id}">
+        <span class="grow">${esc(i.text)}</span><button class="x" data-del="${i.id}">×</button></div>`).join('')
+    : '<div class="muted">کاری مانده نیست 🎉</div>')}
+  ${sec('علائم حیاتی', vitals)}
+  ${sec('آزمایش‌ها', labs)}
+  ${sec('پاراکلینیک', pa.length?rows(pa,'اقدام'):'')}
+  ${sec('پروسیجرها', pr.length?rows(pr,'پروسیجر'):'')}
+  ${sec('معاینه', ex.length?[...ex].reverse().map(i=>
+     `<div class="log"><div class="grow">${esc(i.text)}<small class="muted">${esc(i.date)}</small></div>
+      <button class="x" data-del="${i.id}">×</button></div>`).join(''):'')}
+  ${sec('سیر و یادداشت‌ها', nt.length?[...nt].reverse().map(i=>
+     `<div class="log"><span class="pill ${KINDS[i.kind][1]}">${KINDS[i.kind][0]}</span>
+      <div class="grow">${esc(i.text)}<small class="muted">${esc(i.date)}</small></div>
+      <button class="x" data-del="${i.id}">×</button></div>`).join(''):'')}
+  ${sec('کارهای انجام‌شده', tk.filter(i=>i.done).length?tk.filter(i=>i.done).map(i=>
+     `<div class="log"><span class="pill green">✔</span><div class="grow doneline">${esc(i.text)}
+      <small class="muted">${esc(i.doneAt||i.date)}</small></div>
+      <button class="x" data-del="${i.id}">×</button></div>`).join(''):'')}
   ${(b.ddx||[]).length?`<div class="card"><h3>تشخیص افتراقی</h3>${b.ddx.map(renderDdx).join('<hr>')}</div>`:''}`;
 }
+
 function bindBed(b){
   const $=i=>document.getElementById(i),V=document.getElementById('view');
   if($('edit'))$('edit').onclick=()=>editBed(b);
@@ -417,6 +550,13 @@ function bindBed(b){
     let acts=[]; try{acts=S.settings.apiKey?await parseAI('تخت '+b.bed+' '+t):parseLocal('تخت '+b.bed+' '+t)}
     catch(x){acts=parseLocal('تخت '+b.bed+' '+t)}
     apply(acts.length?acts:[{bed:b.bed,kind:'note',text:t}]); save(); render()};
+  const ci=$('ci');
+  if(ci){
+    ci.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();
+      const q=ci.value.trim();if(q){ci.value='';askAbout(b,q)}}};
+    $('cmic').onclick=()=>listen($('cmic'),$('cmic'),t=>askAbout(b,t));
+    const c=$('chat'); if(c)c.scrollTop=c.scrollHeight;
+  }
   V.querySelectorAll('[data-do]').forEach(c=>c.onchange=()=>{
     const i=b.items.find(x=>x.id===c.dataset.do); i.done=true;i.doneAt=now();
     logit('تخت '+b.bed,'✔ '+i.text,'green');save();render()});
@@ -649,6 +789,27 @@ function copyReport(id){
     if(a.length)t+=l+':\n'+a.map(i=>`- ${i.text}${i.kind==='task'?(i.done?' (انجام شد)':' (مانده)'):''} [${i.date}]`).join('\n')+'\n\n'};
   g('note','سیر بیمار');g('result','جواب‌ها و یافته‌ها');g('task','اقدامات');
   navigator.clipboard.writeText(t).then(()=>{closeSheet();toast('گزارش کپی شد')},()=>alert(t));
+}
+
+/* ═══ مشورت درباره‌ی یک بیمار — فقط همان بیمار را می‌بیند ═══ */
+async function askAbout(b,q){
+  (b.chat=b.chat||[]).push({role:'user',content:q});
+  b.chat.push({role:'assistant',content:'…'});
+  save();render();
+  const put=t=>{b.chat[b.chat.length-1]={role:'assistant',content:t};save();render()};
+  if(!S.settings.apiKey)return put('برای مشورت باید کلید API را در تنظیمات بگذاری.');
+  try{
+    const hist=b.chat.slice(0,-1).slice(-12).map(m=>({role:m.role,content:deName(m.content)}));
+    const t=await ai([{role:'system',content:
+`تو دستیار آموزشی یک اینترن بخش اطفال هستی. فقط درباره‌ی همین یک بیمار حرف بزن و از پرونده‌ی
+زیر بیرون نرو. اگر چیزی در پرونده نیست، بگو ثبت نشده و بپرس. کوتاه و عملی جواب بده، فارسی،
+اصطلاح پزشکی انگلیسی. دوز را همیشه بر حسب mg/kg بده و با وزن ثبت‌شده حساب کن.
+پیشنهادت آموزشی است و جای نظر اتند را نمی‌گیرد.
+
+پرونده‌ی بیمار (بی‌نام):
+${brief(b)}`},...hist],false);
+    put(t);
+  }catch(e){ put('❌ '+e.message) }
 }
 
 /* ═══ ضبط صدا و تبدیل به متن روی سرویس ═══ */
