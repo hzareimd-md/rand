@@ -87,6 +87,14 @@ h3{font-size:14.5px;margin:0 0 9px}
 hr{border:0;border-top:1px solid var(--line);margin:13px 0}
 .cur{background:var(--soft);color:var(--brand);border-radius:10px;padding:7px 11px;font-size:13px;margin-bottom:4px}
 .lnk{background:0;border:0;color:var(--brand);font:inherit;font-size:12.5px;text-decoration:underline;padding:0 6px}
+.bar{position:fixed;bottom:84px;inset-inline:14px;z-index:60;background:var(--brand);color:#fff;
+ border-radius:12px;padding:9px 13px;display:flex;align-items:center;gap:9px;font-size:13.5px;
+ box-shadow:0 6px 20px rgba(0,0,0,.28);overflow:hidden}
+.bar i{position:absolute;inset-block:0;inset-inline-start:0;background:rgba(255,255,255,.22);
+ width:0;animation:fill 2.6s linear forwards}
+.bar span{flex:1}
+.bar .lnk{color:#fff;font-weight:700}
+@keyframes fill{to{width:100%}}
 .clean{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 11px;
  font-size:12.5px;margin-bottom:7px;text-align:right;line-height:1.9}
 .chat{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:7px}
@@ -119,7 +127,7 @@ td.hot{color:var(--danger);font-weight:800}
 /* ═══ داده — فقط روی همین دستگاه ═══ */
 const KEY='rand_v3';
 const DEF={beds:[],log:[],procs:[],settings:{baseUrl:'https://api.gapgpt.app/v1',
-  model:'gemini-2.5-flash-lite',apiKey:'',sttModel:'whisper-1'}};
+  model:'gemini-2.5-flash-lite',apiKey:'',sttModel:''}};
 let S=load();
 function load(){try{return Object.assign({},structuredClone(DEF),JSON.parse(localStorage.getItem(KEY)||'{}'))}
   catch(e){return structuredClone(DEF)}}
@@ -211,11 +219,14 @@ function askView(){
 }
 function bindAsk(){
   const $=i=>document.getElementById(i);
-  if(isIOS&&standalone&&!(S.settings.sttModel&&S.settings.apiKey))
-    $('hint').innerHTML='بزن، بعد <b>🎤 کیبورد</b> را بگیر و حرف بزن';
+  if(isIOS&&!(S.settings.sttModel&&S.settings.apiKey))
+    $('hint').innerHTML='بزن تا کیبورد بیاید، بعد <b>🎤 کیبورد</b> را بگیر و حرف بزن<br>'+
+      '<span class="muted" style="font-size:12px">وقتی تمام شد خودش ثبت می‌کند</span>';
   $('mic').onclick=()=>listen($('mic'),$('hint'),t=>submit(t));   // بعد از صدا خودش ثبت می‌کند
   $('txt').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();
+    clearTimeout(AUTO);hideBar();
     const v=$('txt').value.trim();$('txt').value='';submit(v)}};
+  autoSend($('txt'),submit);
 }
 
 function logit(t,x,c){S.log.unshift({t,x,c,at:now()}); S.log=S.log.slice(0,300)}
@@ -645,8 +656,9 @@ function setView(){const s=S.settings;
     <p class="muted" style="margin-top:0">بدون کلید هم کار می‌کند، ولی جمله‌ها را ساده‌تر می‌فهمد و DDx و پاورپوینت ندارد.</p>
     <label>آدرس سرویس</label><input id="u" value="${esc(s.baseUrl)}">
     <label>مدل</label><input id="m" value="${esc(s.model)}">
-    <label>مدل تبدیل صدا به متن</label><input id="sm" value="${esc(s.sttModel||'')}" placeholder="whisper-1 — خالی = خاموش">
-    <p class="muted" style="margin:4px 0 0;font-size:12px">اگر پر باشد، دکمه‌ی میکروفون خودش ضبط می‌کند و می‌فرستد — روی آیفون هم کار می‌کند.</p>
+    <label>مدل تبدیل صدا به متن — اختیاری</label><input id="sm" value="${esc(s.sttModel||'')}" placeholder="خالی = دیکته‌ی خود گوشی">
+    <p class="muted" style="margin:4px 0 0;font-size:12px">خالی بگذار تا دیکته‌ی خود آیفون کار کند (روی دستگاه، صدا جایی نمی‌رود).
+    فقط اگر آن کار نکرد، اینجا مثلاً <code>whisper-1</code> بنویس تا صدا برای تبدیل فرستاده شود.</p>
     <label>کلید API (فقط روی همین گوشی)</label><input id="k" type="password" value="${esc(s.apiKey)}" placeholder="sk-…">
     <div class="row" style="margin-top:12px"><button class="btn grow" id="sv">ذخیره</button>
       <button class="btn ghost" id="ts">تست متن</button>
@@ -873,10 +885,35 @@ const standalone=window.navigator.standalone===true||
   matchMedia('(display-mode: standalone)').matches;
 
 function useKeyboard(hint,why){
-  const t=document.getElementById('txt');
-  hint.innerHTML=(why?esc(why)+'<br>':'')+'<b>🎤 کیبورد را بگیر و حرف بزن</b>';
+  const t=document.getElementById('txt')||document.querySelector('textarea');
+  hint.innerHTML=(why?esc(why)+'<br>':'')+'<b>🎤 روی کیبورد را بگیر و حرف بزن</b>';
   if(t){t.focus();t.scrollIntoView({block:'center',behavior:'smooth'})}
 }
+
+/* ═══ ثبت خودکار بعد از دیکته ═══
+   دیکته متن را یکجا می‌ریزد؛ تایپ دستی حرف‌به‌حرف است.
+   پس فقط بعد از دیکته شمارش شروع می‌شود، نه وقتی داری تایپ می‌کنی. */
+let AUTO=null;
+function autoSend(el,fire){
+  el.addEventListener('input',e=>{
+    clearTimeout(AUTO); hideBar();
+    const chunk = e.inputType==='insertFromDictation' ||
+                  (e.data&&e.data.length>6) || (!e.inputType&&el.value.length>6);
+    if(!chunk||!el.value.trim())return;
+    showBar();
+    AUTO=setTimeout(()=>{const v=el.value.trim();el.value='';hideBar();if(v)fire(v)},2600);
+  });
+  el.addEventListener('blur',()=>{clearTimeout(AUTO);hideBar()});
+}
+function showBar(){
+  let b=document.getElementById('bar');
+  if(!b){b=document.createElement('div');b.id='bar';b.className='bar';
+    b.innerHTML='<i></i><span>الان ثبت می‌شود…</span><button class="lnk" onclick="stopAuto()">صبر کن</button>';
+    document.body.appendChild(b)}
+}
+function hideBar(){const b=document.getElementById('bar');if(b)b.remove()}
+function stopAuto(){clearTimeout(AUTO);hideBar();
+  const t=document.getElementById('txt');if(t)t.focus()}
 
 async function listen(btn,hint,cb){
   /* راه اول: ضبط و فرستادن به سرویس — همه‌جا کار می‌کند، آیفون هم */
@@ -884,7 +921,7 @@ async function listen(btn,hint,cb){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   /* iOS در حالت نصب‌شده دیکته‌ی وب را رد می‌کند (service-not-allowed).
      پس وقت کاربر را تلف نکن و مستقیم به دیکته‌ی کیبورد ببر. */
-  if(isIOS&&standalone)return useKeyboard(hint,'');
+  if(isIOS)return useKeyboard(hint,'');   /* همه‌ی مرورگرهای آیفون سافاری‌اند */
   if(!SR)return useKeyboard(hint,'این مرورگر دیکته‌ی خودکار ندارد.');
   if(REC){REC.stop();REC=null;return}
 
